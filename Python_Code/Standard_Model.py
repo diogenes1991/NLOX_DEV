@@ -153,6 +153,69 @@ def MULTIPLY(A,B):
         C.append(Row)
         cj = 0
     return C
+
+#Genera un numero aleatorio entre 0 y 1
+
+def aleatorio():
+    r = random.random()#*(x+1) x veces mas probable de que salga un 1
+    if r >0.5:
+        return 1
+    else:
+        return 0
+
+#Funcion para generar un valor entero aleatorio entre a y b
+
+def aleatorio(a,b):
+    return int(a + (b-a)*random.random())
+
+
+#Funcion que crea un grafo dado su dimension y sus aristas
+
+
+def crear(Vertices,Aristas):
+    if Aristas > Vertices*(Vertices-1)/2:
+        print('Error : Revisa tu vaina manito.')
+        return []
+    #Funcion para llenar en funcion de si hay mas ceros o mas unos quien sea mayor se llenara primero
+    default = 0
+    insert = 1
+    if Aristas > Vertices*(Vertices-1)/4:
+        default = 1
+        insert = 0 
+        Aristas = Vertices*(Vertices-1)/2 - Aristas
+    matriz = []
+    #inicializar la matriz 
+    for i in range(Vertices):
+        row = []
+        for j in range(Vertices):
+            row.append(default)
+        matriz.append(row)
+    for i in range(Vertices):
+        matriz[i][i] = 0
+    a = {}
+    b = ''
+    #Asignar valores a la matriz
+    while len(a) < Aristas:
+        #Crear coordenadas aleatorias
+        r1 = aleatorio(0,Vertices)
+        r2 = aleatorio(0,Vertices)
+        if r1 > r2:
+            b = str(r2) + ',' + str(r1)
+        elif r2 > r1:
+            b = str(r1) + ',' + str(r2)
+        else:
+            continue
+
+        if not b in a.keys():
+            a[b] = 1
+        else:
+            continue
+        #Insertar en la matriz
+        matriz[r1][r2] = insert
+        matriz[r2][r1] = insert
+    return matriz
+
+
     
 #  
 #  La cantidad de circuitos cerrados de tamano n 
