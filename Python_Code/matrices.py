@@ -1,5 +1,7 @@
 import sys
+import os
 from math import *
+import random
 
 def PRINT(MATRIX):
     for i in MATRIX:
@@ -9,7 +11,7 @@ def PRINT(MATRIX):
             aux += str(j)
             count += 1
             if(count != len(i)):
-                aux += ","
+                aux += " "
         aux += "|"
         print aux
 
@@ -115,14 +117,45 @@ def create_latex(n):
         l += '\\node[state] ('+str(i)+') at ('+str(cos(2*pi*i/n))+','+str(sin(2*pi*i/n))+') [] {};\n'
          
     l += '\\draw[red]\n'
+    
     for i in range(n):
         l += '('+str((i)%n)+') edge  node {} ('+str((i+1)%n)+')\n'
+    
     l += ';\n'
     
     l += '\\end{tikzpicture}\n'
     l += '\\end{center}\n'
     f.write(l)
+
+def create_graph(adjmat):
     
+    n = len(adjmat)
+    
+    f  = open("Graph.tex","w")
+    l  = ''
+    l += '\\begin{center}\n'
+    l += '\\begin{tikzpicture}[>=stealth\',shorten >=0.5pt,auto,node distance=1.5cm,semithick]\n'
+    l += '\\tikzstyle{every state}=[fill=red,draw=red,minimum size='+str(3*pow(n,-1./2.))+'mm]\n'
+    
+    r = pow(n,1./2.)
+    
+    for i in range(n):
+        l += '\\node[state] ('+str(i)+') at ('+str(r*cos(2*pi*i/n))+','+str(r*sin(2*pi*i/n))+') [] {'+str(i+1)+'};\n'
+         
+    l += '\\draw[red]\n'
+    
+    for i in range(n):
+        for j in range(n):
+            if(i<j):
+                continue
+            if(adjmat[i][j]==1):
+                l += '('+str((i)%n)+') edge  node {} ('+str((j)%n)+')\n'
+    
+    l += ';\n'
+    
+    l += '\\end{tikzpicture}\n'
+    l += '\\end{center}\n'
+    f.write(l)
     
     
     
@@ -172,5 +205,8 @@ PRINT(F)
 print 'The matrix E.D is'
 PRINT(G)
 
-create_latex(7)
+MyMat = crear(50,1225)
+
+create_graph(MyMat)
+PRINT(MyMat)
 
