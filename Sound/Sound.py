@@ -34,46 +34,46 @@ class note:
         
         if(self.frequency==0):
             if(self.length==4.0):
-                self.name = "\pausep"
+                self.name = "\\pausep"
             elif(self.length==2.0):
-                self.name = "\hp"
+                self.name = "\\hp"
             elif(self.length==1.0):
-                self.name = "\qp"
+                self.name = "\\qp"
             elif(self.length==0.5):
-                self.name = "\ds"
+                self.name = "\\ds"
             elif(self.length==0.25):
-                self.name = "\qs"
+                self.name = "\\qs"
             elif(self.length==0.125):
-                self.name = "\hs"
+                self.name = "\\hs"
             else:
-                print 'Error: Bad timing one or more pauses could not be rationalized'
+                print('Error: Bad timing one or more pauses could not be rationalized')
         else:
             if(self.frequency<=523.25):
                 if (self.length==4.0):
-                    self.name = '\wh{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\wh{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
                 elif (self.length==2.0):
-                    self.name = '\hu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\hu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
                 elif (self.length==1.0):
-                    self.name = '\qu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\qu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
                 elif (self.length==0.5):
-                    self.name = '\cu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\cu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
                 elif (self.length==0.25):
-                    self.name = '\ccu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\ccu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
                 elif (self.length==0.125):
-                    self.name = '\cccu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\cccu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
             else:
                 if (self.length==4.0):
-                    self.name = '\wh{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\wh{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
                 elif (self.length==2.0):
-                    self.name = '\hl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\hl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
                 elif (self.length==1.0):
-                    self.name = '\ql{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\ql{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
                 elif (self.length==0.5):
-                    self.name = '\cl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\cl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
                 elif (self.length==0.25):
-                    self.name = '\ccl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\ccl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
                 elif (self.length==0.125):
-                    self.name = '\cccl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\cccl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
     
     def waveform(self,frame):
         if(self.frequency==0):
@@ -105,7 +105,7 @@ class chord:
         for note in notes:
             self.frequency += note.frequency
             if(note.length!=self.length):
-                print "Error: An atempt has been made to create a chord with different-legth notes"
+                print("Error: An atempt has been made to create a chord with different-legth notes")
                 exit()
         self.frequency /= len(notes)
     
@@ -228,8 +228,8 @@ class piece:
         w += '\\usepackage{graphicx}                   \n'
         w += '\\usepackage{musixtex}                   \n'
         w += '\\usepackage{calligra}                   \n' 
-        w += '\\addtolength{\oddsidemargin}{-.875in}   \n'
-        w += '\\addtolength{\evensidemargin}{-.875in}  \n'
+        w += '\\addtolength{\\oddsidemargin}{-.875in}   \n'
+        w += '\\addtolength{\\evensidemargin}{-.875in}  \n'
         w += '\\addtolength{\\textwidth}{1.70in}       \n'
         w += '\\addtolength{\\topmargin}{-.875in}      \n'
         w += '\\addtolength{\\textheight}{1.50in}      \n'
@@ -239,7 +239,7 @@ class piece:
         w += '\\begin{document}                        \n'
         w += '\\maketitle                              \n'
         w += '\\centering                              \n'
-        w += '\\metron{\qu}{'+str(60*self.blacknote)+'}\n'
+        w += '\\metron{\\qu}{'+str(60*self.blacknote)+'}\n'
         w += '\\input{music.tex}                       \n'
         w += '\\end{document}                          \n'
         l.write(w)
@@ -261,18 +261,18 @@ class piece:
         gkey = ''
         fkey = ''
         w += '\\begin{music}                                     \n'
-        w += '\generalmeter{\meterfrac'+metric+'}                \n'
+        w += '\\generalmeter{\\meterfrac'+metric+'}                \n'
         w += '\\nostartrule\n'
-        w += '\setstaffs1{2}\n'
-        w += '\setclef1{\\bass}\n'
-        w += '\startbarno='+str(cc)+'\n'
-        w += '\startextract\n'
+        w += '\\setstaffs1{2}\n'
+        w += '\\setclef1{\\bass}\n'
+        w += '\\startbarno='+str(cc)+'\n'
+        w += '\\startextract\n'
         for note in self.piecedata:
             notecounter += 1
             if(compasscounter==0):
-                w += '\\bar\n\Notes'
+                w += '\\bar\n\\Notes'
             if(beamcounter==0 and compasscounter!=0):
-                    w += '\Notes '
+                    w += '\\Notes '
             compasscounter += note.length
             beamcounter += note.length
             globalcounter += note.length
@@ -280,11 +280,11 @@ class piece:
             if(compasscounter==compasslength):
                 if(freq>self.fgseparation):
                     gkey += note.name+' '
-                    fkey += '\hsk'
+                    fkey += '\\hsk'
                 else:
                     fkey += note.name+' '
-                    gkey += '\hsk'
-                w += fkey + '|' + gkey + '\en'
+                    gkey += '\\hsk'
+                w += fkey + '|' + gkey + '\\en'
                 fkey = ''
                 gkey = ''
                 beamcounter = 0
@@ -294,20 +294,20 @@ class piece:
             else:
                 if(freq>self.fgseparation):
                     gkey += note.name+' '
-                    fkey += '\hsk'
+                    fkey += '\\hsk'
                 else:
                     fkey += note.name+' '
-                    gkey += '\hsk'
+                    gkey += '\\hsk'
             if(linecounter==self.cmpinline):
-                w += '\zendextract\n'
-                w += '\end{music}\n\n'
+                w += '\\zendextract\n'
+                w += '\\end{music}\n\n'
                 if(notecounter<len(self.piecedata)):
                     w += '\\begin{music}\n'
-                    w += '\generalmeter{\meterfrac'+metric+'}\n'
-                    w += '\startbarno='+str(cc)+'\n'
-                    w += '\setstaffs1{2}\n'
-                    w += '\setclef1{\\bass}\n'
-                    w += '\startextract\n'
+                    w += '\\generalmeter{\\meterfrac'+metric+'}\n'
+                    w += '\\startbarno='+str(cc)+'\n'
+                    w += '\\setstaffs1{2}\n'
+                    w += '\\setclef1{\\bass}\n'
+                    w += '\\startextract\n'
                 linecounter = 0
         l.write(w)
         #print w
@@ -316,8 +316,8 @@ class piece:
         self.create_latex()
         self.fill_latex()
         if(compile==1):
-            cmdname = (self.piecename).replace(" ","\ ")+'.tex'
-            logfile = (self.piecename).replace(" ","\ ")+'.latex.log'
+            cmdname = (self.piecename).replace(" ","\\ ")+'.tex'
+            logfile = (self.piecename).replace(" ","\\ ")+'.latex.log'
             os.system('pdflatex %s > %s' % (cmdname,logfile))
         
 def main():
@@ -442,9 +442,9 @@ def main():
             postproc.append(n)
     
     MyPiece = piece(framerate,speed,postproc)
-    MyPiece.piecename = "Zelda Ocarina of Time: Song of Time"
+    MyPiece.piecename = "Zelda"
     MyPiece.write_piece()
-    MyPiece.create_score()
+    MyPiece.create_score(0)
     
     
     
