@@ -7,6 +7,7 @@ import struct
 import random
 import argparse
 from itertools import *
+from math import *
 
 def aleatorio(a,b):
     return int(a+random.random()*(b-a))
@@ -108,7 +109,9 @@ class note:
                     "o","^o","p","q","^q","r","^r","s","t","^t","u","^u"]
         
         if(self.frequency==0):
-            if(self.length==2.0):
+            if(self.length==4.0):
+                self.name = "\pausep"
+            elif(self.length==2.0):
                 self.name = "\hp"
             elif(self.length==1.0):
                 self.name = "\qp"
@@ -121,19 +124,33 @@ class note:
             else:
                 print 'Error: Bad timing one or more pauses could not be rationalized'
         else:
-            if (self.length==4.0):
-                self.name = '\wh{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
-            elif (self.length==2.0):
-                self.name = '\hu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
-            elif (self.length==1.0):
-                self.name = '\qu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
-            elif (self.length==0.5):
-                self.name = '\cu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
-            elif (self.length==0.25):
-                self.name = '\ccu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
-            elif (self.length==0.125):
-                self.name = '\cccu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
-                
+            if(self.frequency<=523.25):
+                if (self.length==4.0):
+                    self.name = '\wh{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                elif (self.length==2.0):
+                    self.name = '\hu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                elif (self.length==1.0):
+                    self.name = '\qu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                elif (self.length==0.5):
+                    self.name = '\cu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                elif (self.length==0.25):
+                    self.name = '\ccu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                elif (self.length==0.125):
+                    self.name = '\cccu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+            else:
+                if (self.length==4.0):
+                    self.name = '\wh{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                elif (self.length==2.0):
+                    self.name = '\hl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                elif (self.length==1.0):
+                    self.name = '\ql{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                elif (self.length==0.5):
+                    self.name = '\cl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                elif (self.length==0.25):
+                    self.name = '\ccl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                elif (self.length==0.125):
+                    self.name = '\cccl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+    
     def waveform(self,frame):
         if(self.frequency==0):
             return 0
@@ -152,13 +169,72 @@ class chord:
     
     def __init__(self,notes=[]):
         self.notes = notes
+        notelist = ["A","^A","B","C","^C","D","^D","E","F","^F","G","^G",
+                    "H","^H","I","J","^J","K","^K","L","M","^M","N","^N",
+                    "a","^a","b","c","^c","d","^d","e","f","^f","g","^g",
+                    "h","^h","i","j","^j","k","^k","l","m","^m","n","^n",
+                    "o","^o","p","q","^q","r","^r","s","t","^t","u","^u"]
+        
+        self.length = notes[0].length
+        self.frequency = 0
+        
+        for note in notes:
+            self.frequency += note.frequency
+            if(note.length!=self.length):
+                print "Error: An atempt has been made to create a chord with different-legth notes"
+                exit()
+        self.frequency /= len(notes)
+    
+        n = ''
+        if (self.length==4.0 or self.length==2.0):
+            n += '\\zh{'
+        else:
+            n += '\\zq{'
+        
+        for i in range(len(notes)-1):
+            n += notelist[int(round(12*math.log(notes[i].frequency/55.)/math.log(2.),0))] + ' '
+        
+        n += '}'
+        
+        lastnote = int(round(12*math.log(notes[len(notes)-1].frequency/55.)/math.log(2.),0))
+        
+        if(notes[len(notes)-1].frequency<=523.25):
+            if (self.length==4.0):
+                n += '\\wh{'+notelist[lastnote]+'}'
+            elif (self.length==2.0):
+                n += '\\hu{'+notelist[lastnote]+'}'
+            elif (self.length==1.0):
+                n += '\\qu{'+notelist[lastnote]+'}'
+            elif (self.length==0.5):
+                n += '\\cu{'+notelist[lastnote]+'}'
+            elif (self.length==0.25):
+                n += '\\ccu{'+notelist[lastnote]+'}'
+            elif (self.length==0.125):
+                n += '\\cccu{'+notelist[lastnote]+'}'
+        
+        else:
+            if (self.length==4.0):
+                n += '\\wh{'+notelist[lastnote]+'}'
+            elif (self.length==2.0):
+                n += '\\hl{'+notelist[lastnote]+'}'
+            elif (self.length==1.0):
+                n += '\\ql{'+notelist[lastnote]+'}'
+            elif (self.length==0.5):
+                n += '\\cl{'+notelist[lastnote]+'}'
+            elif (self.length==0.25):
+                n += '\\ccl{'+notelist[lastnote]+'}'
+            elif (self.length==0.125):
+                n += '\\cccl{'+notelist[lastnote]+'}'
+            
+        self.name = n 
+        
     
     def waveform(self,frame):
         numnotes = len(self.notes)
+        aux = 0
         for note in self.notes:
-            aux = note.waveform(frame)/numnotes
-            
-    
+            aux += note.waveform(frame)/numnotes
+        return aux
     
     
 class piece:
@@ -175,70 +251,36 @@ class piece:
         self.piecedata = piecedata
         self.piecename = "Auto-Generated-Piece"
         self.composer = "Author"
-        self.blacknote = 2                      # In units of 60 BPM
+        self.blacknote = blacknote              # In units of 60 BPM
         self.tempo     = [4,4]                  # Tempo [# of notes,# type of note] to be included per measure
         self.cmpinline = 4                      # Number of Mesures per line
         
-        self.generated = []
+        self.fgseparation = 330.
         
-        numoctaves = 4
-        stepsize = 12         #  Tempered (12/x)th -->  AKA if x=4 the scale is built by temepered 3rds 
-        basefrequency = 440.  # Lowest coded frequency 55.0 Hz  
+        self.piecedata = piecedata
         
+        self.lenght = 0
         
-        ## Fill-in the piece channels 
-        
-        ## Base Rythm: HARD-CODED
-        
-        for j in range(10):
-            self.generated.append([math.pow(2.,float(12)/stepsize),1.])
-            self.generated.append([math.pow(2.,float(5)/stepsize),2.])
-            self.generated.append([math.pow(2.,float(8)/stepsize),1.])
-            
-            self.generated.append([math.pow(2.,float(12)/stepsize),1.])
-            self.generated.append([math.pow(2.,float(5)/stepsize),2.])
-            self.generated.append([math.pow(2.,float(8)/stepsize),1.])
-            
-            self.generated.append([math.pow(2.,float(12)/stepsize),.5])
-            self.generated.append([math.pow(2.,float(15)/stepsize),.5])
-            self.generated.append([math.pow(2.,float(14)/stepsize),1.])
-            self.generated.append([math.pow(2.,float(10)/stepsize),1.])
-            self.generated.append([math.pow(2.,float(8)/stepsize),.5])
-            self.generated.append([math.pow(2.,float(10)/stepsize),.5])
-            
-            self.generated.append([math.pow(2.,float(12)/stepsize),1.])
-            self.generated.append([math.pow(2.,float(5)/stepsize),1.])
-            self.generated.append([math.pow(2.,float(3)/stepsize),.5])
-            self.generated.append([math.pow(2.,float(7)/stepsize),.5])
-            self.generated.append([math.pow(2.,float(5)/stepsize),1.])
-            
-            self.generated.append([math.pow(2.,float(5)/stepsize),4.])
-            
-        #print self.generated
-        self.piecedata = []
-        
-        ## Random Trebble
-        
-        for i in self.generated:
-            self.piecedata.append(note(basefrequency*i[0],"gaussian",self.framerate,i[1],i[1]))
-            
-            
-        Piecelength = 0
+        self.length = 0
         for n in self.piecedata:
-            Piecelength += n.length
+            self.length += n.length
         
-        MissingBlacks  = -float(Piecelength)/(self.cmpinline*self.tempo[0]*self.tempo[1]/4)
-        MissingBlacks += math.ceil(float(Piecelength)/(self.cmpinline*self.tempo[0]*self.tempo[1]/4))
+        MissingBlacks  = -float(self.length)/(self.cmpinline*self.tempo[0]*self.tempo[1]/4)
+        MissingBlacks += math.ceil(float(self.length)/(self.cmpinline*self.tempo[0]*self.tempo[1]/4))
         
-        for i in range(int(4*MissingBlacks*self.cmpinline*self.tempo[0])):
-            self.piecedata.append(note(0.,"gaussian",self.framerate,0.25,0.125/2))
+        for i in range(int(MissingBlacks*self.cmpinline*self.tempo[0])):
+            self.piecedata.append(note(0.,"gaussian",self.framerate,1.0,0.125/2))
             
         
-        Piecelength = 0
+        self.length = 0
         for n in self.piecedata:
-            Piecelength += n.length
+            self.length += n.length
         
-        self.numframes = Piecelength*self.framerate
+        self.numframes = self.length*self.framerate
+    
+    #def __set__(self, instance, value):
+        #print "set in descriptor object"
+        #self.value = value
     
     def write_piece(self):
         
@@ -268,18 +310,18 @@ class piece:
         w += '\\addtolength{\\topmargin}{-.875in}      \n'
         w += '\\addtolength{\\textheight}{1.50in}      \n'
         w += '\\pagenumbering{gobble}                  \n'
-        w += '\\title{\\calligra{'+self.piecename+'}}  \n'
+        w += '\\title{'+self.piecename+' }             \n'
         w += '\\author{'+self.composer+'}              \n'
         w += '\\begin{document}                        \n'
         w += '\\maketitle                              \n'
         w += '\\centering                              \n'
         w += '\\metron{\qu}{'+str(60*self.blacknote)+'}\n'
-        w += '\\input{'+self.piecename+'_music.tex}    \n'
+        w += '\\input{music.tex}                       \n'
         w += '\\end{document}                          \n'
         l.write(w)
     
     def fill_latex(self):
-        tittle = self.piecename+'_music.tex'
+        tittle = 'music.tex'
         l = open(tittle,'w')
         metric = str(self.tempo[0])+str(self.tempo[1])
         beamlength = 4/self.tempo[1]
@@ -302,7 +344,6 @@ class piece:
         w += '\startbarno='+str(cc)+'\n'
         w += '\startextract\n'
         for note in self.piecedata:
-            print note.frequency,note.name
             notecounter += 1
             if(compasscounter==0):
                 w += '\\bar\n\Notes'
@@ -312,9 +353,8 @@ class piece:
             beamcounter += note.length
             globalcounter += note.length
             freq = note.frequency
-            print beamcounter,beamlength
             if(compasscounter==compasslength):
-                if(freq>30.63):
+                if(freq>self.fgseparation):
                     gkey += note.name+' '
                     fkey += '\hsk'
                 else:
@@ -328,7 +368,7 @@ class piece:
                 compasscounter = 0
                 cc += 1
             else:
-                if(freq>30.63):
+                if(freq>self.fgseparation):
                     gkey += note.name+' '
                     fkey += '\hsk'
                 else:
@@ -346,7 +386,16 @@ class piece:
                     w += '\startextract\n'
                 linecounter = 0
         l.write(w)
-        print w
+        #print w
+    
+    def create_score(self):
+        self.create_latex()
+        self.fill_latex()
+        target = 'Piece.tex'
+        cmdname = (self.piecename).replace(" ","\ ")+'.tex'
+        #print cmdname
+        logfile = (self.piecename).replace(" ","\ ")+'.latex.log'
+        os.system('pdflatex %s > %s' % (cmdname,logfile))
         
 def main():
     #parser = argparse.ArgumentParser()
@@ -362,10 +411,52 @@ def main():
     # The time of the piece will be determined by the number of notes 
     # plus 10 black notes buffer before and after  
 
-    MyPiece = piece()
+    rawnotes = []
+    stepsize = 12         #  Tempered (12/x)th -->  AKA if x=4 the scale is built by temepered 3rds 
+    basefrequency = 440.  #  Due to a LaTeX the supported range is [55,] 
+
+    for j in range(10):
+        rawnotes.append([math.pow(2.,float(12)/stepsize),1.])
+        rawnotes.append([math.pow(2.,float(5)/stepsize),2.])
+        rawnotes.append([math.pow(2.,float(8)/stepsize),1.])
+        
+        rawnotes.append([math.pow(2.,float(12)/stepsize),1.])
+        rawnotes.append([math.pow(2.,float(5)/stepsize),2.])
+        rawnotes.append([math.pow(2.,float(8)/stepsize),1.])
+        
+        rawnotes.append([math.pow(2.,float(12)/stepsize),.5])
+        rawnotes.append([math.pow(2.,float(15)/stepsize),.5])
+        rawnotes.append([math.pow(2.,float(14)/stepsize),1.])
+        rawnotes.append([math.pow(2.,float(10)/stepsize),1.])
+        rawnotes.append([math.pow(2.,float(8)/stepsize),.5])
+        rawnotes.append([math.pow(2.,float(10)/stepsize),.5])
+        
+        rawnotes.append([math.pow(2.,float(12)/stepsize),1.])
+        rawnotes.append([math.pow(2.,float(5)/stepsize),1.])
+        rawnotes.append([math.pow(2.,float(3)/stepsize),.5])
+        rawnotes.append([math.pow(2.,float(7)/stepsize),.5])
+        rawnotes.append([math.pow(2.,float(5)/stepsize),1.])
+        
+        rawnotes.append([math.pow(2.,float(5)/stepsize),4.])
+    
+    processednotes = []
+    typeofnotes = "gaussian"
+    dampfactor = 1
+    framerate = 44100
+    speed = 2
+    for i in rawnotes:
+        nn = note(i[0]*basefrequency,typeofnotes,framerate,i[1],i[1]/dampfactor)
+        processednotes.append(nn)
+    
+    c = [note(rawnotes[1][0]*basefrequency,typeofnotes,framerate,4,4),
+         note(rawnotes[0][0]*basefrequency,typeofnotes,framerate,4,4)]
+    processednotes.append(chord(c))
+
+    MyPiece = piece(framerate,speed,processednotes)
+    MyPiece.piecename = "Zelda Ocarina of Time: Song of Time"
     MyPiece.write_piece()
-    MyPiece.create_latex()
-    MyPiece.fill_latex()
+    MyPiece.create_score()
+    
     # each channel is defined by infinite functions which are added to produce a sample.
     #channels = ((sine_wave(args.frequency, args.rate, args.amplitude),) for i in range(args.channels))
 
