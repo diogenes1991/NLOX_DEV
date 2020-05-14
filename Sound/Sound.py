@@ -171,7 +171,7 @@ class piece:
         self.blacknote = blacknote
         self.framerate = framerate
         self.piecedata = piecedata
-        self.piecename = "Auto-Generated-Piece"
+        self.piecename = "Zelda-Ocarina of Time"
         self.blacknote = "60"
         self.tempo     = [4,4]
         self.cmpinline = 1
@@ -180,61 +180,45 @@ class piece:
         self.generated = []
         
         numoctaves = 4
-        stepsize = 5         #  Tempered (12/x)th -->  AKA if x=4 the scale is built by temepered 3rds 
-        basefrequency = 110.  # Lowest coded frequency --> LaTeX limitation
+        stepsize = 12         #  Tempered (12/x)th -->  AKA if x=4 the scale is built by temepered 3rds 
+        basefrequency = 440.  # Lowest coded frequency --> LaTeX limitation
         
         
         ## Fill-in the piece channels 
         
         ## Base Rythm: HARD-CODED
         
-        for j in range(30):
-            self.generated.append(math.pow(2.,float(0)/stepsize))
-            self.generated.append(math.pow(2.,float(2)/stepsize))
-            self.generated.append(math.pow(2.,float(0)/stepsize))
-            self.generated.append(math.pow(2.,float(4)/stepsize))
-            self.generated.append(0)
-            self.generated.append(math.pow(2.,float(4)/stepsize))
-            self.generated.append(math.pow(2.,float(5)/stepsize))
-            self.generated.append(math.pow(2.,float(5)/stepsize))
-            self.generated.append(math.pow(2.,float(3)/stepsize))
-            self.generated.append(0)
-            self.generated.append(math.pow(2.,float(3)/stepsize))
-            self.generated.append(math.pow(2.,float(4)/stepsize))
-            self.generated.append(math.pow(2.,float(5)/stepsize))
-            self.generated.append(math.pow(2.,float(3)/stepsize))
-            self.generated.append(0)
-            self.generated.append(math.pow(2.,float(3)/stepsize))
-            self.generated.append(math.pow(2.,float(4)/stepsize))
-            self.generated.append(math.pow(2.,float(3)/stepsize))
-            self.generated.append(math.pow(2.,float(5)/stepsize))
-            self.generated.append(0)
-            self.generated.append(math.pow(2.,float(4)/stepsize))
-            self.generated.append(math.pow(2.,float(2)/stepsize))
-            self.generated.append(math.pow(2.,float(2)/stepsize))
-            self.generated.append(math.pow(2.,float(1)/stepsize))
-            self.generated.append(0)
-            self.generated.append(math.pow(2.,float(1)/stepsize))
-            self.generated.append(math.pow(2.,float(2)/stepsize))
-            self.generated.append(math.pow(2.,float(2)/stepsize))
-            self.generated.append(math.pow(2.,float(0)/stepsize))
-            self.generated.append(0)
+        for j in range(10):
+            self.generated.append([math.pow(2.,float(14)/stepsize),1.])
+            self.generated.append([math.pow(2.,float(7)/stepsize),2.])
+            self.generated.append([math.pow(2.,float(10)/stepsize),1.])
+            
+            self.generated.append([math.pow(2.,float(14)/stepsize),1.])
+            self.generated.append([math.pow(2.,float(7)/stepsize),2.])
+            self.generated.append([math.pow(2.,float(10)/stepsize),1.])
+            
+            self.generated.append([math.pow(2.,float(14)/stepsize),.5])
+            self.generated.append([math.pow(2.,float(17)/stepsize),.5])
+            self.generated.append([math.pow(2.,float(16)/stepsize),1.])
+            self.generated.append([math.pow(2.,float(14)/stepsize),1.])
+            self.generated.append([math.pow(2.,float(12)/stepsize),.5])
+            self.generated.append([math.pow(2.,float(14)/stepsize),.5])
+            
+            self.generated.append([math.pow(2.,float(14)/stepsize),1.])
+            self.generated.append([math.pow(2.,float(7)/stepsize),1.])
+            self.generated.append([math.pow(2.,float(5)/stepsize),.5])
+            self.generated.append([math.pow(2.,float(9)/stepsize),.5])
+            self.generated.append([math.pow(2.,float(7)/stepsize),1.])
+            
+            self.generated.append([math.pow(2.,float(7)/stepsize),4.])
             
         #print self.generated
         self.piecedata = []
-        self.piecedata2 = []
-        self.piecedata3 = []
         
         ## Random Trebble
         
         for i in self.generated:
-            n = note(basefrequency*i,"gaussian",self.framerate,0.25,0.125/2)
-            #print "Frequency =",n.frequency,"name =",n.name
-            self.piecedata2.append(note(basefrequency*i,"gaussian",self.framerate,0.25,0.125/2))
-            j = math.pow(2.,float(aleatorio(5,10))/stepsize)
-            self.piecedata.append(note(basefrequency*j,"gaussian",self.framerate,0.25,0.25))
-            k = math.pow(2.,float(aleatorio(0,2))/stepsize)
-            self.piecedata3.append(note(basefrequency*k,"gaussian",self.framerate,0.25,0.25))
+            self.piecedata.append(note(basefrequency*i[0],"gaussian",self.framerate,i[1]/2,i[1]/4))
             
             
         Piecelength = 0
@@ -246,9 +230,7 @@ class piece:
         
         for i in range(int(4*MissingBlacks*self.cmpinline*self.tempo[0])):
             self.piecedata.append(note(0.,"gaussian",self.framerate,0.25,0.125/2))
-            self.piecedata2.append(note(0.,"gaussian",self.framerate,0.25,0.125/2))
-            self.piecedata3.append(note(0.,"gaussian",self.framerate,0.25,0.125/2))
-        
+            
         
         Piecelength = 0
         for n in self.piecedata:
@@ -259,20 +241,13 @@ class piece:
     def write_piece(self):
         
         w = wave.open(self.piecename+'.wav', 'w')
-        #print "Writting piece,",len(self.piecedata),"notes found"
-        #w.setparams((nchannels, sampwidth, framerate, nframes, 'NONE', 'not compressed'))
         w.setparams((1,2,self.framerate,self.numframes, 'NONE', 'not compressed'))
         sampwidth = 2
         max_amplitude = float(int((2 ** (sampwidth * 8)) / 2) - 1)
         
         for i in range(len(self.piecedata)):
-            #t = 0
             for frame in range(int(self.framerate*self.piecedata[i].length)):
-                #t +=  int(max_amplitude*self.piecedata[i].waveform(frame))
-                t = int(max_amplitude*self.piecedata2[i].waveform(frame))
-                t +=  int(max_amplitude*self.piecedata[i].waveform(frame))
-                t += int(max_amplitude*self.piecedata3[i].waveform(frame))
-                t /=3
+                t = int(max_amplitude*self.piecedata[i].waveform(frame))
                 binframe =''.join(''.join(struct.pack('h',t)))
                 w.writeframesraw(binframe)
         w.close()
@@ -335,7 +310,7 @@ class piece:
             freq = note.frequency
             if(beamcounter==beamlength):
                 #w += '}\\tbu0\\qb0{'+note.name+'}'
-                if(freq>330):
+                if(freq>30.63):
                     gkey += note.name+' '
                     fkey += '\hsk'
                 else:
@@ -346,7 +321,7 @@ class piece:
                 gkey = ''
                 beamcounter = 0
             else:
-                if(freq>330):
+                if(freq>30.63):
                     gkey += note.name+' '
                     fkey += '\hsk'
                 else:
