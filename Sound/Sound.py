@@ -121,7 +121,9 @@ class note:
             else:
                 print 'Error: Bad timing one or more pauses could not be rationalized'
         else:
-            if (self.length==2.0):
+            if (self.length==4.0):
+                self.name = '\wh{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+            elif (self.length==2.0):
                 self.name = '\hu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
             elif (self.length==1.0):
                 self.name = '\qu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
@@ -171,17 +173,17 @@ class piece:
         self.blacknote = blacknote
         self.framerate = framerate
         self.piecedata = piecedata
-        self.piecename = "Zelda-Ocarina of Time"
-        self.blacknote = "60"
-        self.tempo     = [4,4]
-        self.cmpinline = 1
+        self.piecename = "Auto-Generated-Piece"
         self.composer = "Author"
+        self.blacknote = 2                      # In units of 60 BPM
+        self.tempo     = [4,4]                  # Tempo [# of notes,# type of note] to be included per measure
+        self.cmpinline = 4                      # Number of Mesures per line
         
         self.generated = []
         
         numoctaves = 4
         stepsize = 12         #  Tempered (12/x)th -->  AKA if x=4 the scale is built by temepered 3rds 
-        basefrequency = 440.  # Lowest coded frequency --> LaTeX limitation
+        basefrequency = 440.  # Lowest coded frequency 55.0 Hz  
         
         
         ## Fill-in the piece channels 
@@ -189,28 +191,28 @@ class piece:
         ## Base Rythm: HARD-CODED
         
         for j in range(10):
-            self.generated.append([math.pow(2.,float(14)/stepsize),1.])
-            self.generated.append([math.pow(2.,float(7)/stepsize),2.])
-            self.generated.append([math.pow(2.,float(10)/stepsize),1.])
+            self.generated.append([math.pow(2.,float(12)/stepsize),1.])
+            self.generated.append([math.pow(2.,float(5)/stepsize),2.])
+            self.generated.append([math.pow(2.,float(8)/stepsize),1.])
             
-            self.generated.append([math.pow(2.,float(14)/stepsize),1.])
-            self.generated.append([math.pow(2.,float(7)/stepsize),2.])
-            self.generated.append([math.pow(2.,float(10)/stepsize),1.])
+            self.generated.append([math.pow(2.,float(12)/stepsize),1.])
+            self.generated.append([math.pow(2.,float(5)/stepsize),2.])
+            self.generated.append([math.pow(2.,float(8)/stepsize),1.])
             
-            self.generated.append([math.pow(2.,float(14)/stepsize),.5])
-            self.generated.append([math.pow(2.,float(17)/stepsize),.5])
-            self.generated.append([math.pow(2.,float(16)/stepsize),1.])
-            self.generated.append([math.pow(2.,float(14)/stepsize),1.])
             self.generated.append([math.pow(2.,float(12)/stepsize),.5])
-            self.generated.append([math.pow(2.,float(14)/stepsize),.5])
-            
+            self.generated.append([math.pow(2.,float(15)/stepsize),.5])
             self.generated.append([math.pow(2.,float(14)/stepsize),1.])
-            self.generated.append([math.pow(2.,float(7)/stepsize),1.])
-            self.generated.append([math.pow(2.,float(5)/stepsize),.5])
-            self.generated.append([math.pow(2.,float(9)/stepsize),.5])
-            self.generated.append([math.pow(2.,float(7)/stepsize),1.])
+            self.generated.append([math.pow(2.,float(10)/stepsize),1.])
+            self.generated.append([math.pow(2.,float(8)/stepsize),.5])
+            self.generated.append([math.pow(2.,float(10)/stepsize),.5])
             
-            self.generated.append([math.pow(2.,float(7)/stepsize),4.])
+            self.generated.append([math.pow(2.,float(12)/stepsize),1.])
+            self.generated.append([math.pow(2.,float(5)/stepsize),1.])
+            self.generated.append([math.pow(2.,float(3)/stepsize),.5])
+            self.generated.append([math.pow(2.,float(7)/stepsize),.5])
+            self.generated.append([math.pow(2.,float(5)/stepsize),1.])
+            
+            self.generated.append([math.pow(2.,float(5)/stepsize),4.])
             
         #print self.generated
         self.piecedata = []
@@ -218,7 +220,7 @@ class piece:
         ## Random Trebble
         
         for i in self.generated:
-            self.piecedata.append(note(basefrequency*i[0],"gaussian",self.framerate,i[1]/2,i[1]/4))
+            self.piecedata.append(note(basefrequency*i[0],"gaussian",self.framerate,i[1],i[1]))
             
             
         Piecelength = 0
@@ -246,7 +248,7 @@ class piece:
         max_amplitude = float(int((2 ** (sampwidth * 8)) / 2) - 1)
         
         for i in range(len(self.piecedata)):
-            for frame in range(int(self.framerate*self.piecedata[i].length)):
+            for frame in range(int(self.framerate*self.piecedata[i].length/self.blacknote)):
                 t = int(max_amplitude*self.piecedata[i].waveform(frame))
                 binframe =''.join(''.join(struct.pack('h',t)))
                 w.writeframesraw(binframe)
@@ -269,7 +271,9 @@ class piece:
         w += '\\title{\\calligra{'+self.piecename+'}}  \n'
         w += '\\author{'+self.composer+'}              \n'
         w += '\\begin{document}                        \n'
-        w += '\maketitle                               \n'
+        w += '\\maketitle                              \n'
+        w += '\\centering                              \n'
+        w += '\\metron{\qu}{'+str(60*self.blacknote)+'}\n'
         w += '\\input{'+self.piecename+'_music.tex}    \n'
         w += '\\end{document}                          \n'
         l.write(w)
@@ -298,7 +302,7 @@ class piece:
         w += '\startbarno='+str(cc)+'\n'
         w += '\startextract\n'
         for note in self.piecedata:
-            #print note.frequency,note.name
+            print note.frequency,note.name
             notecounter += 1
             if(compasscounter==0):
                 w += '\\bar\n\Notes'
@@ -308,8 +312,8 @@ class piece:
             beamcounter += note.length
             globalcounter += note.length
             freq = note.frequency
-            if(beamcounter==beamlength):
-                #w += '}\\tbu0\\qb0{'+note.name+'}'
+            print beamcounter,beamlength
+            if(compasscounter==compasslength):
                 if(freq>30.63):
                     gkey += note.name+' '
                     fkey += '\hsk'
@@ -320,6 +324,9 @@ class piece:
                 fkey = ''
                 gkey = ''
                 beamcounter = 0
+                linecounter += 1
+                compasscounter = 0
+                cc += 1
             else:
                 if(freq>30.63):
                     gkey += note.name+' '
@@ -327,11 +334,6 @@ class piece:
                 else:
                     fkey += note.name+' '
                     gkey += '\hsk'
-            if(compasscounter==compasslength):
-                #w += '\n'
-                linecounter += 1
-                compasscounter = 0
-                cc += 1
             if(linecounter==self.cmpinline):
                 w += '\zendextract\n'
                 w += '\end{music}\n\n'
