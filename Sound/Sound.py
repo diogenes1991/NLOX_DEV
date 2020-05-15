@@ -14,11 +14,6 @@ def aleatorio(a,b):
 
 class note:
     
-    # We will have three styles of notes:
-    #        - Square: Sharp rise to maximum amplitude  
-    #        - Triangular: Llinear increase to maximum amplitude (2 Parameters)
-    #        - Gaussian: Exponential rise to maximum
-    
     def __init__(self,frequency=440.0, style="gaussian",
                  framerate=44100,length=1.0, sigma=0.1):
         self.frequency = frequency
@@ -48,32 +43,33 @@ class note:
             else:
                 print('Error: Bad timing one or more pauses could not be rationalized')
         else:
+            notename = notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]
             if(self.frequency<=523.25):
                 if (self.length==4.0):
-                    self.name = '\\wh{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\wh{'+notename+'}'
                 elif (self.length==2.0):
-                    self.name = '\\hu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\hu{'+notename+'}'
                 elif (self.length==1.0):
-                    self.name = '\\qu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\qu{'+notename+'}'
                 elif (self.length==0.5):
-                    self.name = '\\cu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\cu{'+notename+'}'
                 elif (self.length==0.25):
-                    self.name = '\\ccu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\ccu{'+notename+'}'
                 elif (self.length==0.125):
-                    self.name = '\\cccu{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\cccu{'+notename+'}'
             else:
                 if (self.length==4.0):
-                    self.name = '\\wh{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\wh{'+notename+'}'
                 elif (self.length==2.0):
-                    self.name = '\\hl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\hl{'+notename+'}'
                 elif (self.length==1.0):
-                    self.name = '\\ql{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\ql{'+notename+'}'
                 elif (self.length==0.5):
-                    self.name = '\\cl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\cl{'+notename+'}'
                 elif (self.length==0.25):
-                    self.name = '\\ccl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\ccl{'+notename+'}'
                 elif (self.length==0.125):
-                    self.name = '\\cccl{'+notelist[int(round(12*math.log(frequency/55.)/math.log(2.),0))]+'}'
+                    self.name = '\\cccl{'+notename+'}'
     
     def waveform(self,frame):
         if(self.frequency==0):
@@ -87,7 +83,6 @@ class note:
             exp = math.exp(-exp)
             r *= exp
             return r
-        
         
 class chord:
     
@@ -163,11 +158,6 @@ class chord:
     
 class piece:
     
-    #  The black note length will set the fixed separation between the start of consecutive notes
-    #  2 black notes are added as buffers 1 at the start and 1 at the begining
-    #  Piece data stores the notes of the piece in consecutive order 
-    # 
-    
     def __init__(self,framerate=44100, blacknote=1.0,piecedata=[]):
         
         self.blacknote = blacknote
@@ -175,15 +165,12 @@ class piece:
         self.piecedata = piecedata
         self.piecename = "Auto-Generated-Piece"
         self.composer = "Author"
-        self.blacknote = blacknote              # In units of 60 BPM
-        self.tempo     = [4,4]                  # Tempo [# of notes,# type of note] to be included per measure
-        self.cmpinline = 4                      # Number of Mesures per line
+        self.blacknote = blacknote    # In units of 60 BPM
+        self.tempo     = [4,4]        # Tempo [# of notes,# type of note] to be included per measure
+        self.cmpinline = 4            # Number of Mesures per line
         
         self.fgseparation = 330.
-        
         self.piecedata = piecedata
-        
-        self.lenght = 0
         
         self.length = 0
         for n in self.piecedata:
@@ -195,16 +182,11 @@ class piece:
         for i in range(int(MissingBlacks*self.cmpinline*self.tempo[0])):
             self.piecedata.append(note(0.,"gaussian",self.framerate,1.0,0.125/2))
             
-        
         self.length = 0
         for n in self.piecedata:
             self.length += n.length
         
         self.numframes = self.length*self.framerate
-    
-    #def __set__(self, instance, value):
-        #print "set in descriptor object"
-        #self.value = value
     
     def write_piece(self):
         
@@ -223,25 +205,25 @@ class piece:
     def create_latex(self):
         l = open(self.piecename+'.tex','w')
         w  = ''
-        w += '\\documentclass[a4paper]{article}        \n'
-        w += '\\usepackage[english]{babel}             \n'
-        w += '\\usepackage{graphicx}                   \n'
-        w += '\\usepackage{musixtex}                   \n'
-        w += '\\usepackage{calligra}                   \n' 
+        w += '\\documentclass[a4paper]{article}         \n'
+        w += '\\usepackage[english]{babel}              \n'
+        w += '\\usepackage{graphicx}                    \n'
+        w += '\\usepackage{musixtex}                    \n'
+        w += '\\usepackage{calligra}                    \n' 
         w += '\\addtolength{\\oddsidemargin}{-.875in}   \n'
         w += '\\addtolength{\\evensidemargin}{-.875in}  \n'
-        w += '\\addtolength{\\textwidth}{1.70in}       \n'
-        w += '\\addtolength{\\topmargin}{-.875in}      \n'
-        w += '\\addtolength{\\textheight}{1.50in}      \n'
-        w += '\\pagenumbering{gobble}                  \n'
-        w += '\\title{'+self.piecename+' }             \n'
-        w += '\\author{'+self.composer+'}              \n'
-        w += '\\begin{document}                        \n'
-        w += '\\maketitle                              \n'
-        w += '\\centering                              \n'
+        w += '\\addtolength{\\textwidth}{1.70in}        \n'
+        w += '\\addtolength{\\topmargin}{-.875in}       \n'
+        w += '\\addtolength{\\textheight}{1.50in}       \n'
+        w += '\\pagenumbering{gobble}                   \n'
+        w += '\\title{'+self.piecename+' }              \n'
+        w += '\\author{'+self.composer+'}               \n'
+        w += '\\begin{document}                         \n'
+        w += '\\maketitle                               \n'
+        w += '\\centering                               \n'
         w += '\\metron{\\qu}{'+str(60*self.blacknote)+'}\n'
-        w += '\\input{music.tex}                       \n'
-        w += '\\end{document}                          \n'
+        w += '\\input{music.tex}                        \n'
+        w += '\\end{document}                           \n'
         l.write(w)
     
     def fill_latex(self):
@@ -310,8 +292,7 @@ class piece:
                     w += '\\startextract\n'
                 linecounter = 0
         l.write(w)
-        #print w
-    
+        
     def create_score(self,compile=1):
         self.create_latex()
         self.fill_latex()
@@ -352,7 +333,7 @@ def main():
     
     processednotes = []
     typeofnotes = "gaussian"
-    dampfactor = 1
+    dampfactor = 2
     framerate = 44100
     speed = 2
     for i in rawnotes:
@@ -436,15 +417,169 @@ def main():
          note(math.pow(2.,float(-7)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
     processednotes.append(chord(c))
     
+    lenght = .5
+    c = [note(math.pow(2.,float( 5)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-7)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = .5
+    c = [note(math.pow(2.,float( 3)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-9)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = 1.
+    c = [note(math.pow(2.,float( 7)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-5)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = 1.
+    c = [note(math.pow(2.,float( 3)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-9)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = .5
+    c = [note(math.pow(2.,float( 7)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-5)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = .5
+    c = [note(math.pow(2.,float( 8)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-4)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    
+    lenght = 4.
+    c = [note(math.pow(2.,float( 5)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-7)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    
+    lenght = .5
+    c = [note(math.pow(2.,float( 5)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-7)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = .5
+    c = [note(math.pow(2.,float( 3)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-9)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = 1.
+    c = [note(math.pow(2.,float( 7)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-5)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = 1.
+    c = [note(math.pow(2.,float( 3)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-9)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = .5
+    c = [note(math.pow(2.,float( 8)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-5)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = .5
+    c = [note(math.pow(2.,float(10)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-2)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    
+    lenght = 4.
+    c = [note(math.pow(2.,float( 5)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-7)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    
+    lenght = .5
+    c = [note(math.pow(2.,float(12)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float( 0)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = .5
+    c = [note(math.pow(2.,float(15)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float( 3)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = 1.
+    c = [note(math.pow(2.,float( 14)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float( 2)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = 1.
+    c = [note(math.pow(2.,float(15)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float( 3)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = 1.
+    c = [note(math.pow(2.,float(12)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float( 0)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    
+    lenght = 1.
+    c = [note(math.pow(2.,float(15)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float( 3)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = 1.
+    c = [note(math.pow(2.,float(10)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-2)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = 1.
+    c = [note(math.pow(2.,float(12)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float( 0)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = .5
+    c = [note(math.pow(2.,float( 5)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-7)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = .5
+    c = [note(math.pow(2.,float( 3)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-9)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    
+    lenght = 1.
+    c = [note(math.pow(2.,float( 7)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-5)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = 2.
+    c = [note(math.pow(2.,float( 5)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-7)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = 1.
+    c = [note(math.pow(2.,float( 5)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-7)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    
+    lenght = .5
+    c = [note(math.pow(2.,float( 8)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-4)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = .5
+    c = [note(math.pow(2.,float(10)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-2)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = 1.
+    c = [note(math.pow(2.,float( 8)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-4)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = 1.
+    c = [note(math.pow(2.,float(10)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-2)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = .5
+    c = [note(math.pow(2.,float( 7)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-5)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = .5
+    c = [note(math.pow(2.,float( 3)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-9)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    
+    lenght = 1.
+    c = [note(math.pow(2.,float( 8)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-4)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = 1.
+    c = [note(math.pow(2.,float( 7)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-5)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    lenght = 2.
+    c = [note(math.pow(2.,float( 5)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor),
+         note(math.pow(2.,float(-7)/stepsize)*basefrequency,typeofnotes,framerate,lenght,lenght/dampfactor)]
+    processednotes.append(chord(c))
+    
+    
     postproc = []
-    for i in range(10):
+    for i in range(1):
         for n in processednotes:
             postproc.append(n)
     
     MyPiece = piece(framerate,speed,postproc)
-    MyPiece.piecename = "Zelda"
+    MyPiece.piecename = "Zelda Ocarina of Time: Song of Time"
     MyPiece.write_piece()
-    MyPiece.create_score(0)
+    MyPiece.create_score(1)
     
     
     
