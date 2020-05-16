@@ -149,7 +149,7 @@ def create_graph(adjmat):
             if(i<j):
                 continue
             if(adjmat[i][j]==1):
-                l += '('+str((i)%n)+') edge  node {} ('+str((j)%n)+')\n'
+                l += '('+str((i)%n)+') edge [draw=white,double=red,double distance = \pgflinewidth,ultra thick] node {} ('+str((j)%n)+')\n'
     
     l += ';\n'
     
@@ -158,10 +158,28 @@ def create_graph(adjmat):
     f.write(l)
     
     
+def TR(a):
+    c = 0
+    tr = 0
+    for i in a:
+        tr += i[c]
+        c += 1
+    return tr
     
-    
-    
+def CheckIfBiPartite(matadj):
+    n = len(matadj)
+    c = 1
+    aux = matadj
+    for i in range(int(n/2)):
+        print "Tr(M^",c,") = ",TR(aux)/factorial(c)
+        if (TR(aux)!=0):
+            return False
+        aux = MULTIPLY(aux,matadj)
+        aux = MULTIPLY(aux,matadj)
+        c += 2
+    return True
 
+    
     
 #  
 #  La cantidad de circuitos cerrados de tamano n 
@@ -205,8 +223,8 @@ PRINT(F)
 print 'The matrix E.D is'
 PRINT(G)
 
-MyMat = crear(50,1225)
-
+MyMat = crear(16,120)
 create_graph(MyMat)
 PRINT(MyMat)
+CheckIfBiPartite(MyMat)
 
