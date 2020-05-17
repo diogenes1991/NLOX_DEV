@@ -148,7 +148,7 @@ def create_graph(adjmat):
         for j in range(n):
             if(i<j):
                 continue
-            if(adjmat[i][j]==1):
+            if(adjmat[i][j]!=0):
                 l += '('+str((i)%n)+') edge [draw=white,double=red,double distance = \pgflinewidth,ultra thick] node {} ('+str((j)%n)+')\n'
     
     l += ';\n'
@@ -179,52 +179,37 @@ def CheckIfBiPartite(matadj):
         c += 2
     return True
 
+def ComputeCycles(matadj):
+    aux = matadj
+    c = 1
+    for i in range(len(matadj)):
+        print "Tr(M^",c,") = ",TR(aux)/factorial(c)
+        aux = MULTIPLY(aux,matadj)
+        c += 1
+
+def MINOR(a,i,j):
+    if (i>len(a)or j>len(a)):
+        print 'Fatal Error: The requested minor is outside of bounds'
+        sys.exit()
+    OUT = []
+    for k in range(len(a)):
+        ROW = []
+        for l in range(len(a)):
+            if(l!=j):
+                ROW.append(a[k][l])
+        if(k!=i):
+            OUT.append(ROW)
+    return OUT
+        
+def DET(a,d):
+    n = len(a)
+    if(n==1):
+        d[0] = a[0][0]
+        return True
+    for i in range(n):
+        s = [0]
+        DET(MINOR(a,0,i),s)
+        d[0] += (pow(-1.,i))*a[0][i]*s[0]
+    return True
     
     
-#  
-#  La cantidad de circuitos cerrados de tamano n 
-#  es igual a Tr((Matriz de Adyacencia)^n)
-#  
-#   A.B = C -->  Cij = Aik Bkj 
-#   Ej: C11 = A11B11 + A12B21 + A13B31 
-#  
-
-A = [[1,2,3,4]]
-B = [[0],[-1],[1],[2]]
-
-C = MULTIPLY(A,B)
-print 'The matrix A is'
-PRINT(A)
-print 'The matrix B is'
-PRINT(B)
-print 'The matrix A.B is'
-PRINT(C)
-
-
-C = MULTIPLY(B,A)
-print 'The matrix A is'
-PRINT(A)
-print 'The matrix B is'
-PRINT(B)
-print 'The matrix B.A is'
-PRINT(C)
-
-
-D = [[0,1,2,3],[1,2,3,4]]
-E = [[0,1],[1,2],[3,4],[5,6]]
-F = MULTIPLY(D,E)
-G = MULTIPLY(E,D)
-print 'The matrix D is'
-PRINT(D)
-print 'The matrix E is'
-PRINT(E)
-print 'The matrix D.E is'
-PRINT(F)
-print 'The matrix E.D is'
-PRINT(G)
-
-MyMat = crear(16,120)
-create_graph(MyMat)
-PRINT(MyMat)
-CheckIfBiPartite(MyMat)
-
