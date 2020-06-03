@@ -135,7 +135,7 @@ def create_graph(adjmat):
     l  = ''
     l += '\\begin{center}\n'
     l += '\\begin{tikzpicture}[>=stealth\',shorten >=0.5pt,auto,node distance=1.5cm,semithick]\n'
-    l += '\\tikzstyle{every state}=[fill=red,draw=red,minimum size='+str(3*pow(n,-1./2.))+'mm]\n'
+    l += '\\tikzstyle{every state}=[fill=blue,draw=blue,minimum size='+str(3*pow(n,-1./2.))+'mm]\n'
     
     r = pow(n,1./2.)
     
@@ -149,7 +149,7 @@ def create_graph(adjmat):
             if(i<j):
                 continue
             if(adjmat[i][j]!=0):
-                l += '('+str((i)%n)+') edge [draw=white,double=red,double distance = \pgflinewidth,ultra thick] node {} ('+str((j)%n)+')\n'
+                l += '('+str((i)%n)+') edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} ('+str((j)%n)+')\n'
     
     l += ';\n'
     
@@ -202,14 +202,37 @@ def MINOR(a,i,j):
     return OUT
         
 def DET(a,d):
+    #print 'Print computing the determinannt of a',d,'by',d,'matrix'
     n = len(a)
     if(n==1):
         d[0] = a[0][0]
-        return True
+        return d[0]
     for i in range(n):
         s = [0]
         DET(MINOR(a,0,i),s)
         d[0] += (pow(-1.,i))*a[0][i]*s[0]
-    return True
-    
-    
+    return d[0]
+
+def CheckIfConnected(m):
+    aux = m
+    new = [aux[0]]
+    PRINT(m)
+    print '\n'
+    for i in range(len(m)-1):
+        aux = MULTIPLY(aux,m)
+        new.append(aux[0])
+    s = [0]
+    d = DET(new,s)
+    PRINT(m)
+    print 'd=',d
+    if d==0:
+        print 'The graph is not connected'
+        return False
+    else:
+        print 'The graph is connected'
+        return True
+
+M=crear(14,17)
+create_graph(M)
+ComputeCycles(M)
+CheckIfConnected(M)
