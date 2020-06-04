@@ -160,7 +160,8 @@ def create_graph(adjmat):
 def build_graph(adjmat,label):
     n = len(adjmat)
     l  = ''
-    l += '\\begin{figure}\n'
+    #l += label+'\n'
+    l += '\\begin{figure}[h!]\n'
     l += '\\centering'
     l += '\\begin{tikzpicture}[>=stealth\',shorten >=0.5pt,auto,node distance=1.5cm,semithick]\n'
     l += '\\tikzstyle{every state}=[fill=blue,draw=blue,minimum size=3mm]\n'
@@ -256,6 +257,7 @@ def CheckIfConnected(m):
         return True
 
 def GetAllParts(G,FName):
+    
     ## To aid in visualization we will now build LaTeX objects for each graph
     f = open(FName,"w")
     l = build_graph(G,"Full Graph")
@@ -268,9 +270,11 @@ def GetAllParts(G,FName):
         while aux!=0:
             parts.append(aux%2)
             aux -= aux%2
-            aux = aux/2
+            aux  = aux/2
         while len(parts)<len(G):
             parts.append(0)
+        
+        print parts
         
         subadjmat = []
         for i in range(len(G)):
@@ -281,17 +285,70 @@ def GetAllParts(G,FName):
             if parts[i] == 1:
                 subadjmat.append(row)
         
+        
+        
+        subadjmat 
+        
+        
         l = build_graph(subadjmat,"Part \\#"+str(k))
         f.write(l)
                 
         
-            
+def ConnectedComponets(G,C):
+    
+    ## 
+    ##  Construir una lista de vertices conexos
+    ##  CC = ["1"]
+    ##  cc = ["1"]
+    ##  cc -> Guardas a todos los conectados a "1"
+    ##  CC = ["1","3","7"]
+    ##  cc = ["3","7"]
+    ##  C[0] += 1
+    ##  call ConnectedComponets(G-CC,C)
+    ##
+    
+    if len(G) == 1:
+        return 0
+    
+    CC = [0]
+    cc = [0]
+    breakwhile = 0 
+    while breakwhile == 0:
+        breakwhile = 1
+        aux = []
+        for i in cc:
+            for j in range(len(G)):
+                if G[i][j] and j not in aux:
+                    aux.append(j)
+        for i in aux:
+            if i not in CC:
+                CC.append(i)
+                CC.sort()
+                breakwhile = 0
+        cc = aux
+    
+    C.append(CC)
+    
+    GNew = []
+    for i in range(len(G)):
+        row = []
+        for j in range(len(G)):
+            if j not in CC:
+                row.append(G[i][j])
+        if i not in CC:
+            GNew.append(row)
+    
+    ConnectedComponets(GNew,C)
+    
+    
+    
+                
+    
         
 
 
-M=crear(5,7)
-GetAllParts(M,"Parts_of_M.tex")
-#M=crear(9,13)
-#create_graph(M)
-#ComputeCycles(M)
-#CheckIfConnected(M)
+M=crear(30,20)
+C = []
+ConnectedComponets(M,C)
+print C
+create_graph(M)
