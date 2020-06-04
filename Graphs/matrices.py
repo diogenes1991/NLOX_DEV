@@ -157,6 +157,29 @@ def create_graph(adjmat):
     l += '\\end{center}\n'
     f.write(l)
     
+def build_graph(adjmat,label):
+    n = len(adjmat)
+    l  = ''
+    l += '\\begin{figure}\n'
+    l += '\\centering'
+    l += '\\begin{tikzpicture}[>=stealth\',shorten >=0.5pt,auto,node distance=1.5cm,semithick]\n'
+    l += '\\tikzstyle{every state}=[fill=blue,draw=blue,minimum size=3mm]\n'
+    r = pow(n,1./2.)
+    for i in range(n):
+        l += '\\node[state] ('+str(i)+') at ('+str(r*cos(2*pi*i/n))+','+str(r*sin(2*pi*i/n))+') [] {'+str(i+1)+'};\n'
+    l += '\\draw[red]\n'
+    for i in range(n):
+        for j in range(n):
+            if(i<j):
+                continue
+            if(adjmat[i][j]!=0):
+                l += '('+str((i)%n)+') edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} ('+str((j)%n)+')\n'
+    l += ';\n'
+    l += '\\end{tikzpicture}\n'
+    l += '\\caption{'+label+'}\n'
+    l += '\\end{figure}\n'
+    return l
+    
     
 def TR(a):
     c = 0
@@ -232,21 +255,42 @@ def CheckIfConnected(m):
         print 'The graph is connected'
         return True
 
-def GetAllParts(G):
-    for i in range(1<<len(G)):
-        aux = i
+def GetAllParts(G,FName):
+    ## To aid in visualization we will now build LaTeX objects for each graph
+    f = open(FName,"w")
+    l = build_graph(G,"Full Graph")
+    f.write(l)
+    for k in range(1<<len(G)):
+        if k==0 or k==(1<<len(G))-1:
+               continue
+        aux = k
         parts = []
         while aux!=0:
             parts.append(aux%2)
             aux -= aux%2
             aux = aux/2
-        print parts
+        while len(parts)<len(G):
+            parts.append(0)
+        
+        subadjmat = []
+        for i in range(len(G)):
+            row = []
+            for j in range(len(G)):
+                if parts[j] == 1:
+                    row.append(G[i][j])
+            if parts[i] == 1:
+                subadjmat.append(row)
+        
+        l = build_graph(subadjmat,"Part \\#"+str(k))
+        f.write(l)
+                
+        
             
         
 
 
-M=crear(3,1)
-GetAllParts(M)
+M=crear(5,7)
+GetAllParts(M,"Parts_of_M.tex")
 #M=crear(9,13)
 #create_graph(M)
 #ComputeCycles(M)
