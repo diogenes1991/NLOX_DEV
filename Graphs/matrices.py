@@ -183,7 +183,7 @@ def ComputeCycles(matadj):
     aux = matadj
     c = 1
     for i in range(len(matadj)):
-        print "Tr(M^",c,") = ",TR(aux)/factorial(c)
+        print "Tr(M^",c,") = ",TR(aux),factorial(c)
         aux = MULTIPLY(aux,matadj)
         c += 1
 
@@ -232,7 +232,22 @@ def CheckIfConnected(m):
         print 'The graph is connected'
         return True
 
-M=crear(14,17)
-create_graph(M)
-ComputeCycles(M)
-CheckIfConnected(M)
+def GetAllParts(G):
+    for i in range(1<<len(G)):
+        aux = i
+        parts = []
+        while aux!=0:
+            parts.append(aux%2)
+            aux -= aux%2
+            aux = aux/2
+        print parts
+            
+        
+
+
+M=crear(3,1)
+GetAllParts(M)
+#M=crear(9,13)
+#create_graph(M)
+#ComputeCycles(M)
+#CheckIfConnected(M)
