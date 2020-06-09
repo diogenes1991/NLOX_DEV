@@ -2,6 +2,7 @@ import sys
 import os
 from math import *
 import random
+import string
 
 def PRINT(MATRIX):
     for i in MATRIX:
@@ -130,17 +131,31 @@ def create_latex(n):
 def create_graph(adjmat):
     
     n = len(adjmat)
+    C = []
+    ConnectedComponets(adjmat,C,len(adjmat))
     
     f  = open("Graph.tex","w")
     l  = ''
     l += '\\begin{center}\n'
     l += '\\begin{tikzpicture}[>=stealth\',shorten >=0.5pt,auto,node distance=1.5cm,semithick]\n'
-    l += '\\tikzstyle{every state}=[fill=blue,draw=blue,minimum size='+str(3*pow(n,-1./2.))+'mm]\n'
+    
+    colors = []
+    num2alpha = dict(zip(range(1, 27), string.ascii_lowercase))
+    for i in range(len(C)):
+        num = str(252*float(i)/len(C))
+        colors.append('{rgb:red,'+num+';green,'+num+';blue,'+num+'}')
+    for i in range(len(C)):
+        l += '\\tikzstyle{every state'+str(num2alpha[i+1])+'}=[fill=blue,draw=red,minimum size=3mm]\n'
     
     r = pow(n,1./2.)
-    
     for i in range(n):
-        l += '\\node[state] ('+str(i)+') at ('+str(r*cos(2*pi*i/n))+','+str(r*sin(2*pi*i/n))+') [] {'+str(i+1)+'};\n'
+        state = 0
+        count = 0 
+        for j in C:
+            if i in j:
+                state = count
+            count += 1
+        l += '\\node[state'+str(num2alpha[state+1])+'] ('+str(i)+') at ('+str(r*cos(2*pi*i/n))+','+str(r*sin(2*pi*i/n))+') [] {'+str(i+1)+'};\n'
          
     l += '\\draw[red]\n'
     
@@ -256,12 +271,11 @@ def CheckIfConnected(m):
         print 'The graph is connected'
         return True
 
-def GetAllParts(G,FName):
-    
+def CheckIfHamiltonian(G,FName):
     ## To aid in visualization we will now build LaTeX objects for each graph
-    f = open(FName,"w")
-    l = build_graph(G,"Full Graph")
-    f.write(l)
+    #f = open(FName,"w")
+    #l = build_graph(G,"Full Graph")
+    #f.write(l)
     for k in range(1<<len(G)):
         if k==0 or k==(1<<len(G))-1:
                continue
@@ -274,8 +288,6 @@ def GetAllParts(G,FName):
         while len(parts)<len(G):
             parts.append(0)
         
-        print parts
-        
         subadjmat = []
         for i in range(len(G)):
             row = []
@@ -284,18 +296,24 @@ def GetAllParts(G,FName):
                     row.append(G[i][j])
             if parts[i] == 1:
                 subadjmat.append(row)
-        
-        
-        
+                
         subadjmat 
+        C = []
+        ConnectedComponets(subadjmat,C,len(subadjmat))
+        L = len(C)
+        if L > len(G)-len(subadjmat):
+            return False
+    
+    #Theo 1 or 2
+    
+    
+    return True
         
-        
-        l = build_graph(subadjmat,"Part \\#"+str(k))
-        f.write(l)
+        #l = build_graph(subadjmat,"Part \\#"+str(k))
+        #f.write(l)
                 
         
-def ConnectedComponets(G,C):
-    
+def ConnectedComponets(G,C,N):
     ## 
     ##  Construir una lista de vertices conexos
     ##  CC = ["1"]
@@ -307,7 +325,7 @@ def ConnectedComponets(G,C):
     ##  call ConnectedComponets(G-CC,C)
     ##
     
-    if len(G) == 1:
+    if len(G) == 0:
         return 0
     
     CC = [0]
@@ -326,8 +344,17 @@ def ConnectedComponets(G,C):
                 CC.sort()
                 breakwhile = 0
         cc = aux
-    
-    C.append(CC)
+
+    NCC = []
+    L = []
+    for i in range(N):
+        L.append(i)
+    for i in C:
+        for j in i:
+            L.remove(j)
+    for i in CC:
+        NCC.append(L[i])
+    C.append(NCC)
     
     GNew = []
     for i in range(len(G)):
@@ -338,9 +365,8 @@ def ConnectedComponets(G,C):
         if i not in CC:
             GNew.append(row)
     
-    ConnectedComponets(GNew,C)
-    
-    
+    ConnectedComponets(GNew,C,N)
+
     
                 
     
@@ -349,6 +375,6 @@ def ConnectedComponets(G,C):
 
 M=crear(30,20)
 C = []
-ConnectedComponets(M,C)
+ConnectedComponets(M,C,len(M))
 print C
 create_graph(M)
