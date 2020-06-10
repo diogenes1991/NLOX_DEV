@@ -105,7 +105,6 @@ def crear(Vertices,Aristas):
 
 
 def create_latex(n):
-    
     # Ring graph 
     
     f  = open("Graph.tex","w")
@@ -137,15 +136,16 @@ def create_graph(adjmat):
     f  = open("Graph.tex","w")
     l  = ''
     l += '\\begin{center}\n'
-    l += '\\begin{tikzpicture}[>=stealth\',shorten >=0.5pt,auto,node distance=1.5cm,semithick]\n'
-    
+    l += '\\begin{tikzpicture}[\n'
     colors = []
-    num2alpha = dict(zip(range(1, 27), string.ascii_lowercase))
     for i in range(len(C)):
         num = str(252*float(i)/len(C))
-        colors.append('{rgb:red,'+num+';green,'+num+';blue,'+num+'}')
+        colors.append('{rgb,255:red,'+num+';green,'+num+';blue,'+num+'}')
     for i in range(len(C)):
-        l += '\\tikzstyle{every state'+str(num2alpha[i+1])+'}=[fill=blue,draw=red,minimum size=3mm]\n'
+        l += 'state'+str(i)+'/.style={circle, draw='+colors[i]+', fill='+colors[i]+', very thick, minimum size=7mm}'
+        if i != len(C)-1:
+            l += ',\n'
+    l += ']\n'
     
     r = pow(n,1./2.)
     for i in range(n):
@@ -155,7 +155,7 @@ def create_graph(adjmat):
             if i in j:
                 state = count
             count += 1
-        l += '\\node[state'+str(num2alpha[state+1])+'] ('+str(i)+') at ('+str(r*cos(2*pi*i/n))+','+str(r*sin(2*pi*i/n))+') [] {'+str(i+1)+'};\n'
+        l += '\\node[state'+str(i)+'] ('+str(i)+') at ('+str(r*cos(2*pi*i/n))+','+str(r*sin(2*pi*i/n))+') [] {'+str(i+1)+'};\n'
          
     l += '\\draw[red]\n'
     
@@ -271,12 +271,14 @@ def CheckIfConnected(m):
         print 'The graph is connected'
         return True
 
-def CheckIfHamiltonian(G,FName):
+def CheckIfHamiltonian(G):
     ## To aid in visualization we will now build LaTeX objects for each graph
     #f = open(FName,"w")
     #l = build_graph(G,"Full Graph")
     #f.write(l)
+    
     for k in range(1<<len(G)):
+        print 'Checking Part',k,'of',1<<len(G)
         if k==0 or k==(1<<len(G))-1:
                continue
         aux = k
@@ -304,15 +306,38 @@ def CheckIfHamiltonian(G,FName):
         if L > len(G)-len(subadjmat):
             return False
     
-    #Theo 1 or 2
-    
-    
-    return True
+
+def CheckIfHamiltonianTrue(G,Start,FirstTime,C):
+    if FirstTime:
+        for i in G:
+            count = 0
+            for j in i:
+                count += j
+            if count < 2:
+                print 'Not enough Links'
+                return False
         
-        #l = build_graph(subadjmat,"Part \\#"+str(k))
-        #f.write(l)
-                
-        
+        #if CheckIfHamiltonian(G) == False:
+            #print 'The Third Theorem!'
+            #return False
+    
+    # Now the Paths on G
+    
+    C.append(Start)
+    count = 0
+    for k in G[Start]:
+        if k == 1:
+            GNew = G
+            GNew[k][Start] = 0
+            GNew[Start][k] = 0
+            if count not in C:
+                CheckIfHamiltonianTrue(GNew,count,False,C)
+            else:
+                if len(C) == len(G):
+                    return True
+        count += 1
+    return False
+
 def ConnectedComponets(G,C,N):
     ## 
     ##  Construir una lista de vertices conexos
@@ -367,14 +392,14 @@ def ConnectedComponets(G,C,N):
     
     ConnectedComponets(GNew,C,N)
 
-    
-                
-    
-        
 
-
-M=crear(30,20)
+M=crear(36,95)
 C = []
 ConnectedComponets(M,C,len(M))
 print C
-create_graph(M)
+#PRINT(M)
+CH = []
+print CheckIfHamiltonianTrue(M,0,True,CH)
+print CH
+
+#create_graph(M)
