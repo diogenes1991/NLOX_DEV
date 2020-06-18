@@ -55,10 +55,6 @@ def aleatorio():
 def aleatorio(a,b):
     return int(a + (b-a)*random.random())
 
-
-#Funcion que crea un grafo dado su dimension y sus aristas
-
-
 def crear(Vertices,Aristas):
     if Aristas > Vertices*(Vertices-1)/2:
         print('Error : Revisa tu vaina manito.')
@@ -102,11 +98,8 @@ def crear(Vertices,Aristas):
         matriz[r2][r1] = insert
     return matriz
 
-
-
 def create_latex(n):
     # Ring graph 
-    
     f  = open("Graph.tex","w")
     l  = ''
     l += '\\begin{center}\n'
@@ -128,7 +121,6 @@ def create_latex(n):
     f.write(l)
 
 def create_graph(adjmat):
-    
     n = len(adjmat)
     C = []
     ConnectedComponets(adjmat,C,len(adjmat))
@@ -195,7 +187,6 @@ def build_graph(adjmat,label):
     l += '\\caption{'+label+'}\n'
     l += '\\end{figure}\n'
     return l
-    
     
 def TR(a):
     c = 0
@@ -305,7 +296,6 @@ def CheckIfHamiltonian(G):
         L = len(C)
         if L > len(G)-len(subadjmat):
             return False
-    
 
 def CheckIfHamiltonianTrue(G,Start,FirstTime,C):
     if FirstTime:
@@ -391,7 +381,6 @@ def ConnectedComponets(G,C,N):
             GNew.append(row)
     
     ConnectedComponets(GNew,C,N)
-
 
 M=crear(36,95)
 C = []

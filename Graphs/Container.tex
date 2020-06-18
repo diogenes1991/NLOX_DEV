@@ -11,6 +11,7 @@
 \usepackage{multirow}
 \usepackage{geometry}
 \usepackage{cancel}
+% \usepackage{xcolors}
 \addtolength{\oddsidemargin}{-.875in}   
 \addtolength{\evensidemargin}{-.875in}  
 \addtolength{\textwidth}{1.70in}       
@@ -19,8 +20,75 @@
 \pagenumbering{gobble}                  
 \title{\calligra{Graphs}}  
 \author{Author}              
-\begin{document}                        
-\input{Graph.tex}    
+\begin{document}
+\begin{center}
+\begin{tikzpicture}[]
+% state/.style={circle, draw={rgb:red,0.0;green,0.0;blue,0.0}, fill={rgb:red,0.0;green,0.0;blue,0.0}, very thick, minimum size=7mm}]
+% state1/.style={circle, draw={rgb:red,22.9090909091;green,22.9090909091;blue,22.9090909091}, fill={rgb:red,22.9090909091;green,22.9090909091;blue,22.9090909091}, very thick, minimum size=7mm},
+% state2/.style={circle, draw={rgb:red,45.8181818182;green,45.8181818182;blue,45.8181818182}, fill={rgb:red,45.8181818182;green,45.8181818182;blue,45.8181818182}, very thick, minimum size=7mm},
+% state3/.style={circle, draw={rgb:red,68.7272727273;green,68.7272727273;blue,68.7272727273}, fill={rgb:red,68.7272727273;green,68.7272727273;blue,68.7272727273}, very thick, minimum size=7mm},
+% state4/.style={circle, draw={rgb:red,91.6363636364;green,91.6363636364;blue,91.6363636364}, fill={rgb:red,91.6363636364;green,91.6363636364;blue,91.6363636364}, very thick, minimum size=7mm},
+% state5/.style={circle, draw={rgb:red,114.545454545;green,114.545454545;blue,114.545454545}, fill={rgb:red,114.545454545;green,114.545454545;blue,114.545454545}, very thick, minimum size=7mm},
+% state6/.style={circle, draw={rgb:red,137.454545455;green,137.454545455;blue,137.454545455}, fill={rgb:red,137.454545455;green,137.454545455;blue,137.454545455}, very thick, minimum size=7mm},
+% state7/.style={circle, draw={rgb:red,160.363636364;green,160.363636364;blue,160.363636364}, fill={rgb:red,160.363636364;green,160.363636364;blue,160.363636364}, very thick, minimum size=7mm},
+% state8/.style={circle, draw={rgb:red,183.272727273;green,183.272727273;blue,183.272727273}, fill={rgb:red,183.272727273;green,183.272727273;blue,183.272727273}, very thick, minimum size=7mm},
+% state9/.style={circle, draw={rgb:red,206.181818182;green,206.181818182;blue,206.181818182}, fill={rgb:red,206.181818182;green,206.181818182;blue,206.181818182}, very thick, minimum size=7mm},
+% state10/.style={circle, draw={rgb:red,229.090909091;green,229.090909091;blue,229.090909091}, fill={rgb:red,229.090909091;green,229.090909091;blue,229.090909091}, very thick, minimum size=7mm}]
+\node[state] (0) at (5.47722557505,0.0) [] {1};
+% \node[state1] (1) at (5.35753505491,1.1387792303) [] {2};
+% \node[state2] (2) at (5.00369454457,2.22778834377) [] {3};
+% \node[state3] (3) at (4.43116857224,3.21943241649) [] {4};
+% \node[state4] (4) at (3.6649792702,4.07037184407) [] {5};
+% \node[state5] (5) at (2.73861278753,4.74341649025) [] {6};
+% \node[state6] (6) at (1.69255578472,5.20915107437) [] {7};
+% \node[state7] (7) at (0.57252597233,5.44722076026) [] {8};
+% \node[state8] (8) at (-0.57252597233,5.44722076026) [] {9};
+% \node[state9] (9) at (-1.69255578472,5.20915107437) [] {10};
+% \node[state10] (10) at (-2.73861278753,4.74341649025) [] {11};
+% \node[state11] (11) at (-3.6649792702,4.07037184407) [] {12};
+% \node[state12] (12) at (-4.43116857224,3.21943241649) [] {13};
+% \node[state13] (13) at (-5.00369454457,2.22778834377) [] {14};
+% \node[state14] (14) at (-5.35753505491,1.1387792303) [] {15};
+% \node[state15] (15) at (-5.47722557505,3.10314345466e-15) [] {16};
+% \node[state16] (16) at (-5.35753505491,-1.1387792303) [] {17};
+% \node[state17] (17) at (-5.00369454457,-2.22778834377) [] {18};
+% \node[state18] (18) at (-4.43116857224,-3.21943241649) [] {19};
+% \node[state19] (19) at (-3.6649792702,-4.07037184407) [] {20};
+% \node[state20] (20) at (-2.73861278753,-4.74341649025) [] {21};
+% \node[state21] (21) at (-1.69255578472,-5.20915107437) [] {22};
+% \node[state22] (22) at (-0.57252597233,-5.44722076026) [] {23};
+% \node[state23] (23) at (0.57252597233,-5.44722076026) [] {24};
+% \node[state24] (24) at (1.69255578472,-5.20915107437) [] {25};
+% \node[state25] (25) at (2.73861278753,-4.74341649025) [] {26};
+% \node[state26] (26) at (3.6649792702,-4.07037184407) [] {27};
+% \node[state27] (27) at (4.43116857224,-3.21943241649) [] {28};
+% \node[state28] (28) at (5.00369454457,-2.22778834377) [] {29};
+% \node[state29] (29) at (5.35753505491,-1.1387792303) [] {30};
+% \draw[red]
+% (5) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (2)
+% (5) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (4)
+% (6) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (5)
+% (8) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (5)
+% (9) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (1)
+% (12) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (2)
+% (14) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (1)
+% (14) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (6)
+% (14) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (7)
+% (17) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (12)
+% (20) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (12)
+% (21) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (10)
+% (21) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (17)
+% (22) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (10)
+% (22) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (12)
+% (28) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (16)
+% (28) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (19)
+% (28) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (22)
+% (28) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (23)
+% (29) edge [draw=white,double=black,double distance = \pgflinewidth,ultra thick] node {} (26)
+% ;
+\end{tikzpicture}
+\end{center}
+% \input{Graph.tex}
 \end{document} 
 
 
