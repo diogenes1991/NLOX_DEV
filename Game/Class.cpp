@@ -40,6 +40,11 @@ Tile::~Tile(){
 
 }
 
+struct pair{
+    std::function<bool(int)> cls;
+    int val;
+};
+
 class Game{
     
     unsigned int N,M;
@@ -48,17 +53,22 @@ class Game{
     std::vector<int> Topology;
     
     public:
+//         std::vector<std::pair<std::function<bool(int)>,int>> Constraint;
+        
+        std::vector<pair> Constraint;
         
         Game(unsigned int N, unsigned int M);
         ~Game();
         
         bool is_active(int id);
         bool done();
+        void print_constraints();
         void get_play();
         void Link_Board();
-        std::vector<std::pair<std::function<bool(int)>,int>> Constraint;
         void print_cross_sections();
         void print_neraness();
+        void show_active();
+        void empty();
              
         
 };
@@ -89,6 +99,13 @@ void Game::Link_Board(){
     }
 }
 
+void Game::empty(){
+    for(int i=0;i<=Constraint.size();i++){
+        Constraint[i].val = 0;
+    }
+    print_cross_sections();
+}
+
 void Game::get_play(){
             //Print message for player
             // stdin << play
@@ -96,11 +113,14 @@ void Game::get_play(){
             // if_ok -> play()
             // else print error
             int next_id;
-            for(int i=0;i<=1;){
+            while(true){
             if(done()){ 
-                i=2;
+                break;
                 std::cout << "Congratulations, you Win!" << std::endl;
             }
+            print_cross_sections();
+//             print_constraints();
+            show_active();
             std::cout << "Next Play?"<<std::endl;
             std::cin >> next_id;
             bool allow = false;
@@ -115,19 +135,21 @@ void Game::get_play(){
                 std::cout<<"This is an unocupied neighbor of an active tile" << std::endl;
                 std::cout<<"Now checking constraints" << std::endl;
                 for(auto i : Constraint){
-                    if(i.first(next_id) and i.second==0){
+                    if(i.cls(next_id) and i.val==0){
                         constraint = false;
                         }
                 }
                 if(constraint){
                     std::cout << "This play respects all constraints saving it!" << std::endl; 
                     Active.push_back(next_id);
-                    for(auto i : Constraint){
-                        if(i.first(next_id)){
-                            i.second -= 1;
+                    for(int k=0;k<Constraint.size();k++){
+                        if(Constraint[k].cls(next_id)){
+                            std::cout<<"reducing a constraint"<<std::endl;
+                            Constraint[k].val -= 1;
                         }
+                        
                     }
-                    if (done()) i=2;
+//                     if (done()) j=2;
                 }
                 
                 else{ 
@@ -147,12 +169,12 @@ bool Game::is_active(int id){
 
 void Game::print_cross_sections(){
     for(auto i:Constraint){
-        std::cout<<"These tiles are grouped by a constraint:\n{ ";
+        std::cout<<"\nThese tiles are grouped by a constraint:\n{ ";
         for(auto j:Board){
-            if(i.first(j.get_id())) std::cout<<j.get_id()<<" ";
+            if(i.cls(j.get_id())) std::cout<<j.get_id()<<" ";
         }
         std::cout<<"}"<<std::endl;
-        std::cout<<"Only "<<i.second<<" can be active at the time"<<std::endl;
+        std::cout<<"Only "<<i.val<<" can be active at the time"<<std::endl;
     }
 }
 
@@ -166,9 +188,17 @@ void Game::print_neraness(){
 bool Game::done(){
     bool done = true;
     for (auto i:Constraint){
-        if(i.second!=0) done = false;
+        if(i.val!=0) done = false;
     }
     return false;
+}
+
+void Game::show_active(){
+    std::cout<<"The active tiles are: { ";
+    for(auto i: Active){
+        std::cout<<i<<" ";
+    }
+    std::cout<<"}"<<std::endl;
 }
 
 Game::Game(unsigned int n, unsigned int m){
@@ -183,14 +213,20 @@ Game::Game(unsigned int n, unsigned int m){
     
     for (int i=0;i<m;i++){
         auto glambda = [i,m](int x){return (((x)%m)==i);};
-        std::pair<std::function<bool(int)>,int> J(glambda,i);
-        Constraint.push_back(J);
+        pair K;
+        K.cls = glambda;
+        K.val = 3;
+        std::pair<std::function<bool(int)>,int> J(glambda,3);
+        Constraint.push_back(K);
     }
     
     for (int i=0;i<n;i++){
         auto glambda = [i,m,n](int x){return ((int((x)/m)%n)==i);};
-        std::pair<std::function<bool(int)>,int> J(glambda,m+i);
-        Constraint.push_back(J);
+        pair K;
+        K.cls = glambda;
+        K.val = 3;
+        std::pair<std::function<bool(int)>,int> J(glambda,3);
+        Constraint.push_back(K);
     }
     
     Active.push_back(1);
@@ -206,10 +242,11 @@ Game::~Game(){
 int main(){
     
     Game G = Game(5,8);
-    G.Link_Board();
-    G.print_neraness();
+//     std::cout<<G.Constraint[0].val<<std::endl;
+//     G.Constraint[0].val=0;
     G.print_cross_sections();
-//     G.get_play();
+    G.Link_Board();
+    G.get_play();
     
     return 0;
 }
