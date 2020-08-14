@@ -16,10 +16,10 @@ class Tile{
         bool is_neighbor(Tile other);
         void set_as_neighbor(Tile* other){neighbors.push_back(other);}
         void show_neighbors(){for(auto i : neighbors){std::cout<<i->get_id()<<std::endl;}}
+        std::vector<Tile*> neighbors;
         
     private:
         int id;
-        std::vector<Tile*> neighbors;
         std::vector<std::vector<Tile*>> Directions;
     
 };
@@ -68,7 +68,7 @@ class Game{
         void print_cross_sections();
         void print_neraness();
         void show_active();
-        void empty();
+        bool lost();
              
         
 };
@@ -99,13 +99,6 @@ void Game::Link_Board(){
     }
 }
 
-void Game::empty(){
-    for(int i=0;i<=Constraint.size();i++){
-        Constraint[i].val = 0;
-    }
-    print_cross_sections();
-}
-
 void Game::get_play(){
             //Print message for player
             // stdin << play
@@ -115,8 +108,12 @@ void Game::get_play(){
             int next_id;
             while(true){
             if(done()){ 
-                break;
                 std::cout << "Congratulations, you Win!" << std::endl;
+                break;
+            }
+            if(lost()){
+                std::cout << "No more plays can be made: Game Over!"<<std::endl;
+                break;
             }
             print_cross_sections();
 //             print_constraints();
@@ -144,12 +141,10 @@ void Game::get_play(){
                     Active.push_back(next_id);
                     for(int k=0;k<Constraint.size();k++){
                         if(Constraint[k].cls(next_id)){
-                            std::cout<<"reducing a constraint"<<std::endl;
                             Constraint[k].val -= 1;
                         }
                         
                     }
-//                     if (done()) j=2;
                 }
                 
                 else{ 
@@ -169,12 +164,12 @@ bool Game::is_active(int id){
 
 void Game::print_cross_sections(){
     for(auto i:Constraint){
-        std::cout<<"\nThese tiles are grouped by a constraint:\n{ ";
+        std::cout<<"These tiles are grouped by a constraint:\n{ ";
         for(auto j:Board){
             if(i.cls(j.get_id())) std::cout<<j.get_id()<<" ";
         }
         std::cout<<"}"<<std::endl;
-        std::cout<<"Only "<<i.val<<" can be active at the time"<<std::endl;
+        std::cout<<"Only \033[31m"<<i.val<<"\033[0m more can be active at the time"<<std::endl;
     }
 }
 
@@ -238,13 +233,27 @@ Game::~Game(){
     
 }
 
+bool Game::lost(){  
+    bool lost = true;
+    for (auto j: Board){
+        bool allow = true;
+        // First we check if there are tiles that can be filled 
+        for (auto c: Constraint){
+            if(c.cls(j.get_id()) and c.val!=0) {
+                for (auto a: Active){
+                    allow = allow and (a!=j.get_id());
+                }
+            }
+        }
+        lost = (lost and !allow);
+        if(allow) std::cout << "A Play into "<<j.get_id()<<" is allowed!"<<std::endl;
+    }
+    return lost;
+}
 
 int main(){
     
-    Game G = Game(5,8);
-//     std::cout<<G.Constraint[0].val<<std::endl;
-//     G.Constraint[0].val=0;
-    G.print_cross_sections();
+    Game G = Game(8,8);
     G.Link_Board();
     G.get_play();
     
