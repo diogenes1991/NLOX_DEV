@@ -7,10 +7,12 @@ off Statistics;
 
 L MyFunction = 2;
 
-$SOME = n^3;
+$SOME = 3*n^2-3*n+1;
 .sort 
-#call ToPochammer($SOME,n)
-*#call FiniteDifference($SOME,n)
+*#call ToPochammer($SOME,n)
+*#call EvalPochammer($SOME,n)
+
+#call Sum($SOME,n)
 
 L MyFunction = `$SOME';
 
