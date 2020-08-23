@@ -1,6 +1,10 @@
 
 f PochammerSymbol;
+f HarmonicNumber;
+f Factorial;
 f Summmation;
+
+#define REPEATCODE "0"
 
 auto s n;
 
@@ -34,8 +38,6 @@ auto s n;
     .sort
     Local EX = 0;
     
-    #message The maximum term has degree = `$xmax'
-    
     #do i=1,`$xmax'
         
         #call FiniteDifference(`EXPR',`VAR')
@@ -57,12 +59,33 @@ auto s n;
     .sort 
 
     Local EX = replace_(`VAR',nEPCH)*(`EXPR');
+    id PochammerSymbol(nEPCH,n?) = nCOUN^n*PochammerSymbol(nEPCH,n);
+    $xmax = -1;
+    if ( count(nCOUN,1) > $xmax ) $xmax = count_(nCOUN,1);
+    id nCOUN = 1;
+    .sort
 
-    repeat;
-    id PochammerSymbol(nEPCH,0) = 1;
-    id PochammerSymbol(nEPCH,n?) = (nEPCH+n-1)*PochammerSymbol(nEPCH,n-1);
-    endrepeat;
+    #if REPEATCODE
     
+        #message Using repeat code
+        repeat;
+        id PochammerSymbol(nEPCH,0) = 1;
+        id PochammerSymbol(nEPCH,n?) = (nEPCH+n-1)*PochammerSymbol(nEPCH,n-1);
+        endrepeat;
+    
+    #else   *PREPROCESSOR_CODE 
+                
+        #do i=0,{`$xmax'-1}
+        
+            id PochammerSymbol(nEPCH,0) = 1;
+            id PochammerSymbol(nEPCH,{`$xmax'-`i'}) = (nEPCH+{`$xmax'-`i'-1})*PochammerSymbol(nEPCH,{`$xmax'-`i'-1});
+            .sort
+        
+        #enddo
+    
+    #endif
+    
+    id PochammerSymbol(nEPCH,0) = 1;
     id nEPCH = `VAR';
     
     .sort
@@ -82,8 +105,11 @@ auto s n;
 *  the summation variable can be exactly 
 *  summed in terms of Pochammer Symbols
 *
+    #call EvalPochammer(`EXPR',`VAR')
     #call ToPochammer(`EXPR',`VAR')
     
+    #message After casting it into PochammerSymbols = ``EXPR''
+        
     Local EX = replace_(`VAR',nSUMM)*(`EXPR');
     
     id PochammerSymbol(nSUMM,n?) = (n+1)^(-1)*PochammerSymbol(nSUMM,n+1);
