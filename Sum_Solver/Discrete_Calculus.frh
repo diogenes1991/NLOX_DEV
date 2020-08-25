@@ -1,0 +1,161 @@
+
+#message ***********************************
+#message **   Discrete Calculus Package   **
+#message **                               **
+#message ** Built-in Functions:           **
+#message **     - Polynomials Functions   **
+#message **     - Pochammer Symbols       **
+#message **     - Harmonic Numbers        **
+#message **     - Factorials              **
+#message **                               **
+#message ***********************************
+
+f PochammerSymbol;
+f HarmonicNumber;
+f Factorial;
+f Summmation;
+f FiniteDifference;
+f Sum;
+f Multiply;
+f Diff;
+
+auto s n;
+s args;
+
+#procedure AlgebraicFiniteDifference(EXPR,VAR)
+
+    Local EX = replace_(`VAR',nALFD)*FiniteDifference(`EXPR');
+    
+    repeat;
+    id FiniteDifference(Sum(n1?,n2?)) = FiniteDifference(n1)+FiniteDifference(n2);
+    id FiniteDifference(Diff(n1?,n2?)) = FiniteDifference(n1)-FiniteDifference(n2);
+    id FiniteDifference(Multiply(n1?,n2?)) = n2*FiniteDifference(n1)+n1*FiniteDifference(n2)-FiniteDifference(n1)*FiniteDifference(n2);
+    endrepeat;
+    
+    id FiniteDifference(PochammerSymbol(nALFD,n?)) = n*PochammerSymbol(nALFD,n-1);
+    id FiniteDifference(Factorial(nALFD?)) = n1*(nALFD-1)*Factorial(nALFD-1);
+    id FiniteDifference(Factorial(nALFD?)) = (nALFD-1)*Factorial(nALFD-1);
+    id FiniteDifference(HarmonicNumber(nALFD,n?)) = nALFD^(-n);
+    
+    id PochammerSymbol(nALFD,0) = 1;
+    
+    id nALFD = `VAR';
+    id nALFD^(-1) = (`VAR')^(-1);
+    argument;
+    id nALFD = `VAR';
+    endargument;
+    
+    .sort
+    `EXPR' = EX;
+    .sort
+    Local EX = 0;
+
+#endprocedure
+
+
+#procedure FiniteDifference(EXPR,VAR)
+
+    .sort
+     Local EX = nFND*(`EXPR');
+    id nFND*`VAR'^nE? = `VAR'^nE-(`VAR'-1)^nE;
+    .sort 
+    `EXPR' = EX;
+    .sort
+    Local EX = 0;
+
+#endprocedure
+
+#procedure ToPochammer(EXPR,VAR)
+
+    .sort 
+*
+*  This procedure makes use of
+*  Taylor's theorem to express
+*  any polynomial in terms of Pochammer
+*  symbols to prepare it for summation
+*
+
+    Local EX = replace_(`VAR',nTPCH)*(`EXPR');
+    $xmax = -1;
+    $cache = (replace_(`VAR',0)*(`EXPR'))*PochammerSymbol(nTPCH,0);
+    $den = 1;
+    if ( count(nTPCH,1) > $xmax ) $xmax = count_(nTPCH,1);
+    .sort
+    Local EX = 0;
+    
+    #do i=1,`$xmax'
+        
+        #call FiniteDifference(`EXPR',`VAR')
+        $cache = $cache + (`$den')*(replace_(`VAR',0)*(`EXPR'))*PochammerSymbol(nTPCH,`i');
+        $den = `$den'*({`i'+1})^(-1);
+        .sort
+        
+    #enddo
+        
+    `EXPR' = replace_(nTPCH,`VAR')*(`$cache');
+    .sort
+
+
+#endprocedure
+
+
+#procedure EvalPochammer(EXPR,VAR)
+
+    .sort 
+
+    Local EX = replace_(`VAR',nEPCH)*(`EXPR');
+    id PochammerSymbol(nEPCH,n?) = nCOUN^n*PochammerSymbol(nEPCH,n);
+    $xmax = -1;
+    if ( count(nCOUN,1) > $xmax ) $xmax = count_(nCOUN,1);
+    id nCOUN = 1;
+    id nCOUN^(-1) = 1;
+    .sort
+
+    #message `$xmax'
+    #do i=0,{`$xmax'-1}
+    
+        #message id PochammerSymbol(nEPCH,{`$xmax'-`i'}) = (nEPCH+{`$xmax'-`i'-1})*PochammerSymbol(nEPCH,{`$xmax'-`i'-1});
+        id PochammerSymbol(nEPCH,{`$xmax'-`i'}) = (nEPCH+{`$xmax'-`i'-1})*PochammerSymbol(nEPCH,{`$xmax'-`i'-1});
+        id PochammerSymbol(nEPCH,0) = 1;
+        .sort
+
+    #enddo
+    
+    argument;
+    id nEPCH = `VAR';
+    endargument;
+    
+    id nEPCH^(-1) = (`VAR')^(-1);
+    id nEPCH = `VAR';
+    
+    .sort
+    Local EX = 0;
+    `EXPR' = EX;
+    .sort
+
+#endprocedure
+
+
+
+#procedure Sum(EXPR,VAR)
+
+*
+*  This procedure is based on a simple 
+*  premisse, any polynomial function in 
+*  the summation variable can be exactly 
+*  summed in terms of Pochammer Symbols
+*
+    #call EvalPochammer(`EXPR',`VAR')
+    #call ToPochammer(`EXPR',`VAR')
+    
+    Local EX = replace_(`VAR',nSUMM)*(`EXPR');
+    
+    id PochammerSymbol(nSUMM,n?) = (n+1)^(-1)*PochammerSymbol(nSUMM,n+1);
+    
+    .sort 
+    
+    `EXPR' = replace_(nSUMM,`VAR')*(EX);
+    
+    #call EvalPochammer(`EXPR',`VAR')
+    
+#endprocedure
