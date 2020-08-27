@@ -10,32 +10,64 @@
 #message **                               **
 #message ***********************************
 
-f PochammerSymbol;
-f HarmonicNumber;
-f Factorial;
-f Summmation;
-f FiniteDifference;
-f Sum;
-f Multiply;
-f Diff;
+Function PochammerSymbol;
+Function HarmonicNumber;
+Function Factorial;
+Function Summmation;
+Function FiniteDifference;
+Function Sum,Dif,Mul,Div;
+Function Functional,fun;
 
-auto s n;
-s args;
+auto Symbol n;
+Symbol args;
+
+#procedure ConvertIntoTree(EXPR)
+	.sort
+	Local EX = `EXPR';
+	id fun?(?args) = Functional(fun(?args));
+	id Functional(?args1)*Functional(?args2) = Mul(?args1,?args2);
+	repeat id Mul(?args1)*Functional(?args2) = Mul(?args1,?args2);
+	id Functional(fun?(?args)) = fun(?args);
+
+	.sort
+	Local EX = Sum(EX);
+	splitarg Sum;
+	id Sum(fun?(?args)) = fun(?args);	
+	
+	.sort
+	`EXPR' = EX;
+	.sort
+	Local EX = 0;
+#endprocedure
 
 #procedure AlgebraicFiniteDifference(EXPR,VAR)
+	#call ConvertIntoTree(`EXPR')
 
-    Local EX = replace_(`VAR',nALFD)*FiniteDifference(`EXPR');
+	Local EX = replace_(`VAR',nALFD)*FiniteDifference(`EXPR');
     
     repeat;
-    id FiniteDifference(Sum(n1?,n2?)) = FiniteDifference(n1)+FiniteDifference(n2);
-    id FiniteDifference(Diff(n1?,n2?)) = FiniteDifference(n1)-FiniteDifference(n2);
-    id FiniteDifference(Multiply(n1?,n2?)) = n2*FiniteDifference(n1)+n1*FiniteDifference(n2)-FiniteDifference(n1)*FiniteDifference(n2);
+    id FiniteDifference(Sum(n1?,?args2)) = FiniteDifference(n1)+FiniteDifference(Sum(?args2));
+    id FiniteDifference(Mul(n1?,?args)) = Mul(?args)*FiniteDifference(n1)+n1*FiniteDifference(Mul(?args))-FiniteDifference(n1)*FiniteDifference(Mul(?args));
+    argument;
+    id Mul(fun?(?args)) = fun(?args);
+    id Sum(fun?(?args)) = fun(?args);
+    id Sum(-fun?(?args)) = -fun(?args);
+    endargument;
+    id Mul(fun?(?args)) = fun(?args);
+    id Sum(fun?(?args)) = fun(?args);
+    id Sum(-fun?(?args)) = -fun(?args);
     endrepeat;
     
+    id Mul(n1?,n2?) = n1*n2;
+    id Sum(n1?,n2?) = n1+n2;
+    id Dif(n1?,n2?) = n1-n2;
+
     id FiniteDifference(PochammerSymbol(nALFD,n?)) = n*PochammerSymbol(nALFD,n-1);
-    id FiniteDifference(Factorial(nALFD?)) = n1*(nALFD-1)*Factorial(nALFD-1);
+    id FiniteDifference(-PochammerSymbol(nALFD,n?)) = -n*PochammerSymbol(nALFD,n-1);
     id FiniteDifference(Factorial(nALFD?)) = (nALFD-1)*Factorial(nALFD-1);
+    id FiniteDifference(-Factorial(nALFD?)) = -(nALFD-1)*Factorial(nALFD-1);
     id FiniteDifference(HarmonicNumber(nALFD,n?)) = nALFD^(-n);
+    id FiniteDifference(-HarmonicNumber(nALFD,n?)) = -nALFD^(-n);
     
     id PochammerSymbol(nALFD,0) = 1;
     
@@ -48,13 +80,11 @@ s args;
     .sort
     `EXPR' = EX;
     .sort
+    
     Local EX = 0;
-
 #endprocedure
 
-
 #procedure FiniteDifference(EXPR,VAR)
-
     .sort
      Local EX = nFND*(`EXPR');
     id nFND*`VAR'^nE? = `VAR'^nE-(`VAR'-1)^nE;
@@ -62,18 +92,10 @@ s args;
     `EXPR' = EX;
     .sort
     Local EX = 0;
-
 #endprocedure
 
 #procedure ToPochammer(EXPR,VAR)
-
     .sort 
-*
-*  This procedure makes use of
-*  Taylor's theorem to express
-*  any polynomial in terms of Pochammer
-*  symbols to prepare it for summation
-*
 
     Local EX = replace_(`VAR',nTPCH)*(`EXPR');
     $xmax = -1;
@@ -94,13 +116,9 @@ s args;
         
     `EXPR' = replace_(nTPCH,`VAR')*(`$cache');
     .sort
-
-
 #endprocedure
 
-
 #procedure EvalPochammer(EXPR,VAR)
-
     .sort 
 
     Local EX = replace_(`VAR',nEPCH)*(`EXPR');
@@ -132,19 +150,9 @@ s args;
     Local EX = 0;
     `EXPR' = EX;
     .sort
-
 #endprocedure
 
-
-
 #procedure Sum(EXPR,VAR)
-
-*
-*  This procedure is based on a simple 
-*  premisse, any polynomial function in 
-*  the summation variable can be exactly 
-*  summed in terms of Pochammer Symbols
-*
     #call EvalPochammer(`EXPR',`VAR')
     #call ToPochammer(`EXPR',`VAR')
     
@@ -156,6 +164,5 @@ s args;
     
     `EXPR' = replace_(nSUMM,`VAR')*(EX);
     
-    #call EvalPochammer(`EXPR',`VAR')
-    
+    #call EvalPochammer(`EXPR',`VAR') 
 #endprocedure
