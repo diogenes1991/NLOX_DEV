@@ -90,6 +90,8 @@ def UniqueChainsReplaced(RawFile):
     UCFLine += '#call NLOXSimplifyColorFooter \n'
     UCFLine += '#call NLOXSimplifyColorPrintEnd\n'
     UCF.write(UCFLine)
+    UCF.close()
+    UCRF.close()
 
 UniqueChainsReplaced('ColorProducts.id.frm')
 aTools.runForm('UniqueChains.frm','UniqueChains.frm.out',False,'form')
