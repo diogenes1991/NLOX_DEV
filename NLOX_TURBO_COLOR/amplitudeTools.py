@@ -22,12 +22,12 @@ def splitExpressions(filename):
     newlines). The first item of the sublist for a term is what's
     bracketed (in the FORM sense), and the second item is the rest.
     '''
-
+    print 'Splitting',filename
     with open(filename, 'r') as file:
         lines = []
         exprline = ""
         for line in file:
-            if "FORM" in line  or "#" in line  or "~"  in line or "off statistics" in line:
+            if "FORM" in line  or "#" in line  or "~"  in line or "off statistics" in line or ".sort" in line or "argument" in line or "endargument" in line:
                 continue
             exprline += line.strip(' ')
             if ";" in line:
@@ -37,6 +37,9 @@ def splitExpressions(filename):
     expressions = []
     for line in lines:
         expr = line.split('=')
+        if len(expr)<2:
+            print expr
+            sys.exit()
         expr[0] = expr[0].replace('\n','').replace("\\", '').replace('l ','')
         subexpr = expr[1].split('\n\n')
         bres = []
